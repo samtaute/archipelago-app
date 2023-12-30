@@ -1,0 +1,9 @@
+{
+    "appId": "node-app-sjxov",
+    "appUrl": "https://realm.mongodb.com/groups/6554c5de51a0714672867092/apps/6585bc89a8a4613ffec37cb0",
+    "baseUrl": "https://realm.mongodb.com",
+    "clientApiBaseUrl": "https://us-east-1.aws.realm.mongodb.com",
+    "dataApiBaseUrl": "https://us-east-1.aws.data.mongodb-api.com",
+    "dataExplorerLink": "https://cloud.mongodb.com/links/6554c5de51a0714672867092/explorer/firstCluster/database/collection/find",
+    "dataSourceName": "mongodb-atlas"
+}
