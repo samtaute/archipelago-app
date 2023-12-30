@@ -76,9 +76,17 @@ export function useNodeRecords() {
   }
 
   const deleteNodeRecord = async(recordId: BSON.ObjectId)=>{
-    await nodeCollection?.deleteOne({
-      _id: recordId,
-    })
+    const doc = {
+      $or: [
+        {
+          _id: recordId,
+        },
+        {
+          parentId: recordId,
+        }
+      ]
+    }
+    await nodeCollection?.deleteMany(doc)
   }
 
   return {
