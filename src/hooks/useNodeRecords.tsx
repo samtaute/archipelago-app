@@ -10,8 +10,8 @@ export function useNodeRecords() {
 
   const nodeCollection = useCollection({
     cluster: "mongodb-atlas",
-    db: "nodes",
-    collection: "myNodes",
+    db: "archipelago-prod",
+    collection: "nodes",
   });
 
   useEffect(() => {
