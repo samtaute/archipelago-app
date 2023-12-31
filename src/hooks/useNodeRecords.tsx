@@ -50,7 +50,16 @@ export function useNodeRecords() {
     },
     onDelete: (change: Realm.Services.MongoDB.DeleteEvent<any>)=>{
       setNodeRecords((oldNodeRecords)=>{
-        return oldNodeRecords.filter((node)=>{return !node._id.equals(change.documentKey._id)})
+        let updatedRecords=[...oldNodeRecords]
+        deleteRecord(change.documentKey._id)
+
+        function deleteRecord(id: BSON.ObjectId){
+          updatedRecords = updatedRecords.filter((node)=>{return !node._id.equals(id)})
+          for(const record of updatedRecords.filter((rec)=>rec.parentId?.equals(change.documentKey._id))){
+            deleteRecord(record._id)
+          }
+        }
+        return updatedRecords; 
       })
     }
 
@@ -76,17 +85,26 @@ export function useNodeRecords() {
   }
 
   const deleteNodeRecord = async(recordId: BSON.ObjectId)=>{
-    const doc = {
-      $or: [
-        {
-          _id: recordId,
-        },
-        {
-          parentId: recordId,
-        }
-      ]
+    await nodeCollection?.deleteOne({
+      _id: recordId,
+    })
+
+    for(const record of nodeRecords.filter((rec)=>rec.parentId?.equals(recordId))){
+      deleteNodeRecord(record._id)
     }
-    await nodeCollection?.deleteMany(doc)
+
+    
+    // const doc = {
+    //   $or: [
+    //     {
+    //       _id: recordId,
+    //     },
+    //     {
+    //       parentId: recordId,
+    //     }
+    //   ]
+    // }
+    // await nodeCollection?.deleteMany(doc)
   }
 
   return {
