@@ -13,6 +13,7 @@ import { flattenTree } from "../util/flattenTree.tsx";
 import { findSlot } from "../util/findSlot.tsx";
 import SlotMarker from "./SlotMarker.tsx";
 import { siblingsAtPath } from "../util/pathFunctions.tsx";
+import { BSON } from "realm-web";
 
 
 // The TreeEditor performs the following:
@@ -37,6 +38,7 @@ const TreeEditor = ({
   //TreeEditor State
   const [draggingNode, setDraggingNode] = useState<UniqueIdentifier>("");
   const [slotPath, setSlotPath] = useState<number[]>([]);
+  const [focusId, setFocusId]=useState<BSON.ObjectId|null>(null)
 
   const handleTabPress = (node: TreeNodeData) => {
     const startingDepth = node.path.length;
@@ -185,7 +187,63 @@ const TreeEditor = ({
     }
   };
 
-  //calculateOrder takes an array of nodes and an index and returns an order value that can be used to add an item to the array at the desired index.
+  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>, nodeData: TreeNodeData) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+
+      const siblings = siblingsAtPath(nodeData.path, treeNodes);
+      const targetIdx = nodeData.path[nodeData.path.length - 1] + 1;
+
+      insertNodeRecord({
+        parentId: nodeData.parentId,
+        order: calculateOrder(siblings, targetIdx),
+        text: "",
+      });
+    } else if (event.key === "Backspace") {
+      // if cursor at first position:
+      //deletecurrentNode
+      const selection = window.getSelection();
+      if (selection?.anchorOffset === 0) {
+        event.preventDefault();
+        deleteNodeRecord(nodeData._id);
+      }
+    } else if (event.key === "Tab" && event.shiftKey === false) {
+      console.log(event);
+      event.preventDefault();
+      handleTabPress(nodeData);
+    } else if (event.key === "Tab" && event.shiftKey === true) {
+      event.preventDefault();
+      handleShiftTabPress(nodeData);
+    } else if (event.key === "ArrowUp"){
+      event.preventDefault();
+      const targetIdx = flatTree.findIndex((nd)=>nd.id.equals(nodeData._id))
+      console.log(targetIdx)
+      if(targetIdx > 0){
+        setFocusId(flatTree[targetIdx-1].id)
+      }
+    } else if (event.key==="ArrowDown"){
+      event.preventDefault(); 
+      const targetIdx = flatTree.findIndex((nd)=>nd.id.equals(nodeData._id))
+      if(targetIdx < flatTree.length-1){
+        console.log(flatTree[targetIdx+1].id.toString())
+        setFocusId(flatTree[targetIdx+1].id)
+      }
+    }
+    //calculateOrder takes an array of nodes and an index and returns an order value that can be used to add an item to the array at the desired index.
+ 
+  }
+
+  const handleBlur = (event: React.FocusEvent<HTMLDivElement>, nodeData: TreeNodeData) => {
+    if (nodeData.text != event.currentTarget.innerHTML) {
+      updateNodeRecord({
+        _id: nodeData._id,
+        order: nodeData.order,
+        text: event.currentTarget.innerHTML,
+        parentId: nodeData.parentId,
+      });
+    }
+  };
+  
   function calculateOrder(
     siblings: TreeNodeData[] | DatabaseNodeRecord[],
     index: number
@@ -227,6 +285,8 @@ const TreeEditor = ({
     return order;
   }
 
+  
+
   return (
     <div id="page">
       {slotPath.length > 0 && (
@@ -242,13 +302,10 @@ const TreeEditor = ({
             <TreeNode
               nodeData={node}
               key={node._id.toString()}
-              updateNodeRecord={updateNodeRecord}
-              insertNodeRecord={insertNodeRecord}
-              deleteNodeRecord={deleteNodeRecord}
-              handleTabPress={handleTabPress}
-              handleShiftTabPress={handleShiftTabPress}
+              handleKeyDown={handleKeyDown}
+              handleBlur={handleBlur}
+              focusId={focusId}
               draggingNode={draggingNode}
-              rootNodes={treeNodes}
             />
           );
         })}

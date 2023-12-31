@@ -3,25 +3,20 @@ import ExpandArrow from "./ui/ExpandArrow";
 import TreeNodeBullet from "./TreeNodeBullet";
 import TreeNodeText from "./TreeNodeText";
 import { UniqueIdentifier, useDroppable } from "@dnd-kit/core";
+import { BSON } from "realm-web";
 
 const TreeNode = ({
   nodeData,
-  updateNodeRecord,
-  insertNodeRecord,
-  deleteNodeRecord,
-  handleTabPress,
-  handleShiftTabPress,
+  handleKeyDown,
+  handleBlur,
   draggingNode,
-  rootNodes,
+  focusId
 }: {
   nodeData: TreeNodeData;
-  updateNodeRecord: (record: any) => Promise<void>;
-  insertNodeRecord: (record: any) => Promise<void>;
-  deleteNodeRecord: (recordId: any) => Promise<void>;
-  handleTabPress: (node: TreeNodeData) => void; 
-  handleShiftTabPress: (node: TreeNodeData) => void; 
+  handleKeyDown: any,
+  handleBlur: any,
   draggingNode: UniqueIdentifier;
-  rootNodes: TreeNodeData[];
+  focusId: BSON.ObjectId|null; 
 }) => {
   const { setNodeRef } = useDroppable({
     id: nodeData._id.toString(),
@@ -46,13 +41,10 @@ const TreeNode = ({
         </div>
         <TreeNodeBullet nodeData={nodeData} />
         <TreeNodeText
-          rootNodes={rootNodes}
           nodeData={nodeData}
-          insertNodeRecord={insertNodeRecord}
-          updateNodeRecord={updateNodeRecord}
-          deleteNodeRecord={deleteNodeRecord}
-          handleTabPress={handleTabPress}
-          handleShiftTabPress={handleShiftTabPress}
+          handleBlur={handleBlur}
+          handleKeyDown={handleKeyDown}
+          focusId={focusId}
         />
       </div>
       <div className="node-children">
@@ -61,13 +53,10 @@ const TreeNode = ({
             <TreeNode
               nodeData={node}
               key={node._id.toString()}
-              updateNodeRecord={updateNodeRecord}
-              insertNodeRecord={insertNodeRecord}
-              deleteNodeRecord={deleteNodeRecord}
-              handleTabPress={handleTabPress}
-              handleShiftTabPress={handleShiftTabPress}
+              handleBlur={handleBlur}
+              handleKeyDown={handleKeyDown}
               draggingNode={draggingNode}
-              rootNodes={rootNodes}
+              focusId={focusId}
             />
           );
         })}

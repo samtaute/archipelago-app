@@ -1,105 +1,54 @@
-import { DatabaseNodeRecord, TreeNodeData } from "../definition";
-import { siblingsAtPath } from "../util/pathFunctions";
+import { BSON } from "realm-web";
+import { TreeNodeData } from "../definition";
+import { useEffect, useRef } from "react";
 
 const TreeNodeText = ({
   nodeData,
-  updateNodeRecord,
-  insertNodeRecord,
-  deleteNodeRecord,
-  handleTabPress,
-  handleShiftTabPress,
-  rootNodes,
+  handleBlur,
+  handleKeyDown,
+  focusId,
 }: {
   nodeData: TreeNodeData;
-  insertNodeRecord: (record: any) => Promise<void>;
-  updateNodeRecord: (record: any) => Promise<void>;
-  deleteNodeRecord: (recordId: any) => Promise<void>;
-  handleTabPress: (node: TreeNodeData) => void;
-  handleShiftTabPress: (node: TreeNodeData) => void;
-
-  rootNodes: TreeNodeData[];
+  handleBlur: (
+    event: React.FocusEvent<HTMLDivElement>,
+    nodeData: TreeNodeData
+  ) => void;
+  handleKeyDown: (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    nodeData: TreeNodeData
+  ) => void;
+  focusId: BSON.ObjectId | null;
 }) => {
-  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    if (event.key === "Enter") {
-      event.preventDefault();
+  const thisComponent = useRef<HTMLDivElement>(null);
 
-      const siblings = siblingsAtPath(nodeData.path, rootNodes);
-      const targetIdx = nodeData.path[nodeData.path.length - 1] + 1;
-
-      insertNodeRecord({
-        parentId: nodeData.parentId,
-        order: calculateOrder(siblings, targetIdx),
-        text: "",
-      });
-    } else if (event.key === "Backspace") {
-      // if cursor at first position:
-      //deletecurrentNode
-      const selection = window.getSelection();
-      if (selection?.anchorOffset === 0) {
-        event.preventDefault();
-        deleteNodeRecord(nodeData._id);
-      }
-    } else if (event.key === "Tab" && event.shiftKey === false) {
-      console.log(event);
-      event.preventDefault();
-      handleTabPress(nodeData);
-    } else if (event.key === "Tab" && event.shiftKey === true) {
-      event.preventDefault();
-      handleShiftTabPress(nodeData);
-    }
-    //calculateOrder takes an array of nodes and an index and returns an order value that can be used to add an item to the array at the desired index.
-    function calculateOrder(
-      siblings: TreeNodeData[] | DatabaseNodeRecord[],
-      index: number
-    ) {
-      if (siblings.length === 0) return 100;
-
-      //Map siblings to array or orders sorted in ascending order.
-      const siblingOrders = siblings
-        .map((sib) => {
-          return sib.order;
-        })
-        .sort();
-
-      //Execute logic for determining order. Reset orders of all sibling nodes if order diffs become too small.
-      let order;
-      let diff;
-      if (index === 0) {
-        order = Math.floor(siblingOrders[0] / 2);
-        diff = siblingOrders[0];
-      } else if (index >= siblingOrders.length) {
-        order = Math.floor(siblingOrders[siblingOrders.length - 1] + 100);
-      } else {
-        diff = siblingOrders[index] - siblingOrders[index - 1];
-        order = Math.floor(siblingOrders[index - 1] + diff / 2);
-      }
-
-      //Todo: This is a costly operation as it requires several database queries. Consider moving it somwhere else.
-      if (diff && diff < 3) {
-        for (let i = 0; i < siblings.length; i++) {
-          updateNodeRecord({
-            _id: siblings[i]._id,
-            order: i * 100,
-            parentId: siblings[i].parentId,
-            text: siblings[i].text,
-          });
-        }
-      }
-
-      return order;
-    }
-  }
+  const keyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    handleKeyDown(event, nodeData);
+  };
 
   const blurHandler = (event: React.FocusEvent<HTMLDivElement>) => {
-    if (nodeData.text != event.currentTarget.innerHTML) {
-      updateNodeRecord({
-        _id: nodeData._id,
-        order: nodeData.order,
-        text: event.currentTarget.innerHTML,
-        parentId: nodeData.parentId,
-      });
-    }
+    handleBlur(event, nodeData);
   };
+
+  useEffect(() => {
+    if (focusId?.equals(nodeData._id)) {
+      thisComponent.current!.focus();
+
+      if (thisComponent.current?.childNodes[0]) {
+        const range = document.createRange();
+        range.setStart(thisComponent.current!.childNodes[0], 0);
+        range.collapse(true);
+
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+    }
+  }, [focusId, nodeData._id]);
+
+  useEffect(() => {
+      thisComponent.current!.focus();
+  }, []);
+
   return (
     <div
       className="node-header-text"
@@ -107,7 +56,8 @@ const TreeNodeText = ({
       suppressContentEditableWarning
       dangerouslySetInnerHTML={{ __html: nodeData.text }}
       onBlur={blurHandler}
-      onKeyDown={handleKeyDown}
+      onKeyDown={keyDownHandler}
+      ref={thisComponent}
     ></div>
   );
 };
