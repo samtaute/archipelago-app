@@ -19,8 +19,6 @@ export function useCollection({ cluster = "mongodb-atlas", db, collection }: con
   const app = useContext(AppContext); 
 
   return useMemo(() => {
-    console.log(app); 
-    console.log(app?.currentUser)
     if(app === null){return}
     if(app.currentUser !== null){
       const mdb = app.currentUser.mongoClient(cluster);

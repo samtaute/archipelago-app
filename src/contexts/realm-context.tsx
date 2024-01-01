@@ -23,14 +23,24 @@ function AppProvider({
   children,
 }: PropsWithChildren<{ appId: string }>) {  
 
-  const [app, setApp] = useState(createApp(appId));
+  
+
+
+  const [app] = useState(createApp(appId));
+  const [currentUser, setCurrentUser] = useState(app.currentUser);
 
   //todo: investigate whether this useEffect is necessary
-  useEffect(() => {
-    setApp(createApp(appId));
-  }, [appId]);
+  useEffect(() => {   
+    anonymousLogin(); 
 
-  const [currentUser, setCurrentUser] = useState(app.currentUser);
+    async function anonymousLogin(){
+      const credentials = Realm.Credentials.anonymous(); 
+      const user = await app.logIn(credentials)
+      setCurrentUser(user)
+    }
+
+  }, [app]);
+
 
   const logIn = useCallback(
     async (credentials: Realm.Credentials) => {
