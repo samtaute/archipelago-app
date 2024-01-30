@@ -1,18 +1,27 @@
-import TreeEditor from './components/TreeEditor'
-import { useNodeRecords } from './hooks/useNodeRecords';
+import TreeEditor from "./components/TreeEditor";
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import ErrorPage from "./pages/Error";
+import WelcomePage from "./pages/Welcome";
+import ConfirmationPage from "./pages/Confirmation";
 
+const router = createBrowserRouter([
+  {
+    path: "/archipelago-app/",
+    errorElement: <ErrorPage />,
+    children: [
+      { index: true, element: <TreeEditor /> },
+      { path: "login", element: <WelcomePage/> },
+      { path: "confirmation", element: <ConfirmationPage/>}
+    ],
+  },
+]);
 
 function App() {
-  const {nodeRecords, updateNodeRecord, insertNodeRecord, deleteNodeRecord} = useNodeRecords(); 
 
-  
-  return (
-    <div id="app">
-        <TreeEditor data={nodeRecords} updateNodeRecord={updateNodeRecord} insertNodeRecord={insertNodeRecord} deleteNodeRecord={deleteNodeRecord}/>
-    </div>
-  )
+  return <RouterProvider router={router}></RouterProvider>;
 }
 
-export default App
-
-
+export default App;

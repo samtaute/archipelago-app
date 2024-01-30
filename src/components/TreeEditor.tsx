@@ -8,12 +8,15 @@ import {
 import TreeNode from "./TreeNode";
 import { DatabaseNodeRecord, TreeNodeData } from "../definition.ts";
 import { buildTree } from "../util/buildTree.tsx";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { flattenTree } from "../util/flattenTree.tsx";
 import { findSlot } from "../util/findSlot.tsx";
 import SlotMarker from "./SlotMarker.tsx";
 import { siblingsAtPath } from "../util/pathFunctions.tsx";
 import { BSON } from "realm-web";
+import { useNodeRecords } from "../hooks/useNodeRecords.tsx";
+import { AppContext } from "../contexts/realm-context.tsx";
+import {useNavigate} from "react-router-dom"
 
 
 // The TreeEditor performs the following:
@@ -21,19 +24,21 @@ import { BSON } from "realm-web";
 //      2. Wraps the slot marker, which is positioned absolutely in relation to the "page" div.
 //      3. Renders the RootNode from the tree-context.
 
-const TreeEditor = ({
-  data,
-  updateNodeRecord,
-  insertNodeRecord,
-  deleteNodeRecord,
-}: {
-  data: DatabaseNodeRecord[];
-  updateNodeRecord: (record: any) => Promise<void>;
-  insertNodeRecord: (record: any) => Promise<void>;
-  deleteNodeRecord: (recordId: any) => Promise<void>;
-}) => {
+const TreeEditor = () => {
+  const { nodeRecords, updateNodeRecord, insertNodeRecord, deleteNodeRecord } =
+  useNodeRecords();
+  const navigate = useNavigate()
+  const app = useContext(AppContext)
+  useEffect(()=>{
+    if (!app?.currentUser){
+      navigate("/archipelago-app/login")
+    }
+  },[navigate, app])
+ 
+
+
   //Create rootNodes and flatTree
-  const treeNodes = buildTree(data);
+  const treeNodes = buildTree(nodeRecords);
   const flatTree = flattenTree(treeNodes);
   //TreeEditor State
   const [draggingNode, setDraggingNode] = useState<UniqueIdentifier>("");
