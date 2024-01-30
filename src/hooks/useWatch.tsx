@@ -34,7 +34,8 @@ export function useWatch(
   useEffect(() => {
     let stream: any;
     const watchNodes = async () => {
-      stream = collection!.watch({ filter });
+      if(!collection) return;   
+      stream = collection.watch({ filter });
       for await (const change of stream) {
         switch (change.operationType) {
           case "insert": {

@@ -16,7 +16,8 @@ export function useNodeRecords() {
 
   useEffect(() => {
     let shouldUpdate = true;
-    const fetchTreeNodes = nodeCollection!.find({});
+    if(!nodeCollection)return; 
+    const fetchTreeNodes = nodeCollection.find({});
     if (shouldUpdate) {
       fetchTreeNodes.then((fetchedNodes) => {
         setNodeRecords(fetchedNodes);
