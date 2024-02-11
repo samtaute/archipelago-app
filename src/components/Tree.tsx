@@ -202,7 +202,6 @@ const NodeTree = () => {
     nodeData: TreeNodeData
   ) {
     if (event.key === "Enter") {
-      console.log("enter");
       event.preventDefault();
       const siblings = siblingsAtPath(nodeData.path, nodeTree);
       const targetIdx = nodeData.path[nodeData.path.length - 1] + 1;

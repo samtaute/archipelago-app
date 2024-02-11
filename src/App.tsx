@@ -14,7 +14,7 @@ import {
 } from "@apollo/client";
 import { useContext } from "react";
 import { AppContext } from "./contexts/realm-context";
-import NodeTree from "./components/MongoTreeEditor";
+import NodeTree from "./components/Tree";
 
 
 
