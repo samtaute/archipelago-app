@@ -1,6 +1,5 @@
-import { BSON } from "realm-web";
-import { TreeNodeData } from "../definition";
 import { useEffect, useRef } from "react";
+import { TreeNodeData } from "../util/buildTree";
 
 const TreeNodeText = ({
   nodeData,
@@ -17,7 +16,7 @@ const TreeNodeText = ({
     event: React.KeyboardEvent<HTMLDivElement>,
     nodeData: TreeNodeData
   ) => void;
-  focusId: BSON.ObjectId | null;
+  focusId: string | null;
 }) => {
   const thisComponent = useRef<HTMLDivElement>(null);
 
@@ -30,7 +29,7 @@ const TreeNodeText = ({
   };
 
   useEffect(() => {
-    if (focusId?.equals(nodeData._id)) {
+    if (focusId === nodeData._id) {
       thisComponent.current!.focus();
 
       if (thisComponent.current?.childNodes[0]) {
@@ -54,7 +53,7 @@ const TreeNodeText = ({
       className="node-header-text"
       contentEditable
       suppressContentEditableWarning
-      dangerouslySetInnerHTML={{ __html: nodeData.text }}
+      dangerouslySetInnerHTML={{ __html: nodeData.text ? nodeData.text : '' }}
       onBlur={blurHandler}
       onKeyDown={keyDownHandler}
       ref={thisComponent}

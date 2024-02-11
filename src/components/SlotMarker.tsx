@@ -1,4 +1,4 @@
-import { FlatNode} from "../definition";
+import { FlatNode } from "../util/flattenTree";
 
 const SlotMarker = ({ flatTree, slotPath }: { flatTree: FlatNode[]; slotPath: number[] }) => {  
   //Calculate Left Margin of Marker

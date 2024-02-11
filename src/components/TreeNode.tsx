@@ -1,9 +1,8 @@
-import { TreeNodeData } from "../definition";
 import ExpandArrow from "./ui/ExpandArrow";
 import TreeNodeBullet from "./TreeNodeBullet";
 import TreeNodeText from "./TreeNodeText";
 import { UniqueIdentifier, useDroppable } from "@dnd-kit/core";
-import { BSON } from "realm-web";
+import { TreeNodeData } from "../util/buildTree";
 
 const TreeNode = ({
   nodeData,
@@ -16,7 +15,7 @@ const TreeNode = ({
   handleKeyDown: any,
   handleBlur: any,
   draggingNode: UniqueIdentifier;
-  focusId: BSON.ObjectId|null; 
+  focusId: string|null; 
 }) => {
   const { setNodeRef } = useDroppable({
     id: nodeData._id.toString(),

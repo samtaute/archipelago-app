@@ -1,5 +1,6 @@
 import { DragMoveEvent, Active, Over } from "@dnd-kit/core";
-import { TreeNodeData, FlatNode } from "../definition";
+import { TreeNodeData } from "./buildTree"
+import { FlatNode } from "./flattenTree"
 
 export function findSlot(
   event: DragMoveEvent,

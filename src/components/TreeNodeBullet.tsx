@@ -1,5 +1,5 @@
 import { useDraggable} from "@dnd-kit/core";
-import { TreeNodeData } from "../definition";
+import { TreeNodeData } from "../util/buildTree"
 
 
 const TreeNodeBullet = ({nodeData} : {nodeData: TreeNodeData}) => {
