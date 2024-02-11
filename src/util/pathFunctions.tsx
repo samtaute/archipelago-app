@@ -1,4 +1,4 @@
-import { TreeNodeData } from "../definition";
+import { TreeNodeData } from "./buildTree";
 
 //Returns all siblings of a node identified by its tree path. 
 export function siblingsAtPath(slotPath: number[], treeNodes: TreeNodeData[]){

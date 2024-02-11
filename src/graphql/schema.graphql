@@ -1,0 +1,108 @@
+input NodeInsertInput {
+  parentId: ObjectId
+  text: String
+  _id: ObjectId
+  order: Int!
+}
+
+input NodeQueryInput {
+  text_gt: String
+  order_ne: Int
+  _id_ne: ObjectId
+  order_gt: Int
+  _id_nin: [ObjectId]
+  text_ne: String
+  text_lt: String
+  order: Int
+  text_nin: [String]
+  _id_exists: Boolean
+  order_exists: Boolean
+  parentId_gte: ObjectId
+  parentId_lte: ObjectId
+  order_in: [Int]
+  _id_lt: ObjectId
+  parentId_lt: ObjectId
+  _id: ObjectId
+  order_gte: Int
+  order_lte: Int
+  parentId_nin: [ObjectId]
+  AND: [NodeQueryInput!]
+  text: String
+  text_lte: String
+  text_gte: String
+  parentId_in: [ObjectId]
+  text_exists: Boolean
+  parentId_ne: ObjectId
+  order_lt: Int
+  text_in: [String]
+  parentId_exists: Boolean
+  order_nin: [Int]
+  parentId_gt: ObjectId
+  parentId: ObjectId
+  OR: [NodeQueryInput!]
+  _id_in: [ObjectId]
+  _id_lte: ObjectId
+  _id_gt: ObjectId
+  _id_gte: ObjectId
+}
+
+type Mutation {
+  deleteManyNodes(query: NodeQueryInput): DeleteManyPayload
+  deleteOneNode(query: NodeQueryInput!): Node
+  insertManyNodes(data: [NodeInsertInput!]!): InsertManyPayload
+  insertOneNode(data: NodeInsertInput!): Node
+  replaceOneNode(data: NodeInsertInput!, query: NodeQueryInput): Node
+  updateManyNodes(query: NodeQueryInput, set: NodeUpdateInput!): UpdateManyPayload
+  updateOneNode(query: NodeQueryInput, set: NodeUpdateInput!): Node
+  upsertOneNode(query: NodeQueryInput, data: NodeInsertInput!): Node
+}
+
+type DeleteManyPayload {
+  deletedCount: Int!
+}
+
+type InsertManyPayload {
+  insertedIds: [ObjectId]!
+}
+
+type UpdateManyPayload {
+  matchedCount: Int!
+  modifiedCount: Int!
+}
+
+enum NodeSortByInput {
+  ORDER_ASC
+  ORDER_DESC
+  PARENTID_ASC
+  PARENTID_DESC
+  TEXT_ASC
+  TEXT_DESC
+  _ID_ASC
+  _ID_DESC
+}
+
+type Query {
+  node(query: NodeQueryInput): Node
+  nodes(limit: Int = 100, sortBy: NodeSortByInput, query: NodeQueryInput): [Node]!
+}
+
+scalar ObjectId
+
+input NodeUpdateInput {
+  parentId: ObjectId
+  _id: ObjectId
+  parentId_unset: Boolean
+  text: String
+  text_unset: Boolean
+  order: Int
+  _id_unset: Boolean
+  order_inc: Int
+  order_unset: Boolean
+}
+
+type Node {
+  _id: ObjectId!
+  order: Int!
+  parentId: ObjectId
+  text: String
+}

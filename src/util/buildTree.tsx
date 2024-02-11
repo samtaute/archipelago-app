@@ -1,26 +1,35 @@
-import { DatabaseNodeRecord, TreeNodeData } from "../definition";
+import { Node } from "../gql/graphql";
 
-export function buildTree(databaseRecords: DatabaseNodeRecord[]) {
+export interface TreeNodeData{
+  _id: string, 
+  order: number, 
+  parentId: string, 
+  text: string|undefined, 
+  children: TreeNodeData[], 
+  path: number[]
+}
+
+export function buildTree(rawNodes: Node[]) {
   //Create Map for quick reference
   const nodeMap = new Map();
   //Create array to be returned.
   const nodeCollection: TreeNodeData[] = [];
 
   //Add each record to nodeMap for quick reference
-  for (const record of databaseRecords) {
+  for (const record of rawNodes) {
     const newNode: TreeNodeData = {
       _id: record._id,
-      text: record.text,
+      text: record.text ? record.text as string : undefined, 
       path: [],
       parentId: record.parentId,
       children: [] as TreeNodeData[],
-      order: record.order,
+      order: record.order ? record.order as number : 100,
     };
 
     nodeMap.set(record["_id"].toString(), newNode);
   }
 
-  for (const record of databaseRecords) {
+  for (const record of rawNodes) {
     const { _id, parentId, order } = record;
     const newNode = nodeMap.get(_id.toString());
     if (!parentId) {
