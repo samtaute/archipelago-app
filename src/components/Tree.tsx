@@ -16,11 +16,11 @@ import { AppContext } from "../contexts/realm-context";
 import { buildTree } from "../util/buildTree";
 import { FlatNode, flattenTree } from "../util/flattenTree";
 import TreeNode from "./TreeNode";
-import SlotMarker from "./SlotMarker";
 import { findSlot } from "../util/findSlot";
 import { TreeNodeData } from "../util/buildTree";
 import { Node } from "../gql/graphql";
 import { siblingsAtPath } from "../util/pathFunctions";
+import { createSlotConfig } from "../util/createSlotConfig";
 
 const NodeTree = () => {
   const app = useContext(AppContext);
@@ -37,10 +37,14 @@ const NodeTree = () => {
 
   let nodeTree = [] as TreeNodeData[];
   let flatTree = [] as FlatNode[];
+  let slotConfig: {slotId: string, pos: string}|undefined; 
 
   if (nodes) {
     nodeTree = buildTree(nodes);
     flatTree = flattenTree(nodeTree);
+  }
+  if (slotPath.length > 0){
+    slotConfig = createSlotConfig(slotPath, nodeTree) 
   }
 
   useEffect(() => {
@@ -59,9 +63,6 @@ const NodeTree = () => {
 
   return (
     <div id="page">
-      {slotPath.length > 0 && (
-        <SlotMarker slotPath={slotPath} flatTree={flatTree} />
-      )}
       <DndContext
         onDragStart={handleDragStart}
         onDragMove={handleDragMove}
@@ -76,6 +77,7 @@ const NodeTree = () => {
               handleBlur={handleBlur}
               focusId={focusId}
               draggingNode={draggingNode}
+              slotConfig={slotConfig}
             />
           );
         })}
