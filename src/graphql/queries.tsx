@@ -1,12 +1,13 @@
 import {gql} from 'graphql-tag'
 
 export const nodesQuery = gql`
-    query Nodes {
-        nodes{
+    query Nodes($query: NodeQueryInput) {
+        nodes(query: $query){
             _id
             order
             text
             parentId
+            ownerId
         }
     }
 `  
@@ -18,6 +19,7 @@ export const insertNodeMutation = gql`
             order
             text
             parentId
+            ownerId
         }
     }
 `
@@ -29,6 +31,7 @@ export const nodeByIdQuery = gql`
             order
             text
             parentId
+            ownerId
         }
     }
 `
@@ -40,6 +43,7 @@ export const updateNodeMutation = gql`
             order
             text
             parentId
+            ownerId
         }
     }
 `
@@ -50,6 +54,7 @@ export const deleteNodeMutation = gql`
             order
             text
             parentId
+            ownerId
         }
     }
 `

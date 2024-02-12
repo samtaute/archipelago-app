@@ -12,9 +12,10 @@ import {
   NodeUpdateInput,
 } from "../gql/graphql";
 
-export const useNodes = () => {
+export const useNodes = (ownerId: string|undefined) => {
   const { loading, error, data } = useQuery(nodesQuery, {
     // pollInterval: 500,
+    variables: {query: {ownerId}}
   });
   return { nodes: data?.nodes as Node[], loading, error: Boolean(error) };
 };
@@ -34,15 +35,26 @@ export const useInsertNode = () => {
           order: data.order,
           parentId: data.parentId,
           text: data.text,
+          ownerId: data.ownerId,
         },
       },
       update: (proxy, response) => {
         const previousData: { nodes: any[] } | null = proxy.readQuery({
           query: nodesQuery,
+          variables: {
+            query: {
+              ownerId: data.ownerId
+            }
+          }
         });
         const newData = [...previousData!.nodes, response.data.insertOneNode];
         proxy.writeQuery({
           query: nodesQuery,
+          variables: {
+            query: {
+              ownerId: data.ownerId
+            }
+          },
           data: {
             nodes: newData,
           },
@@ -74,6 +86,7 @@ export const useUpdateNode = () => {
           parentId: set.parentId,
           text: set.text,
           parentId_unset: set.parentId_unset,
+          ownerId: set.ownerId,
         },
       },
     });
@@ -82,7 +95,7 @@ export const useUpdateNode = () => {
   return { updateNode, loading };
 };
 
-export const useDeleteNode = () => {
+export const useDeleteNode = (ownerId: string|undefined) => {
   const [mutate, { loading }] = useMutation(deleteNodeAndChildrenMutation);
 
   const deleteNode = async (query: NodeQueryInput) => {
@@ -96,12 +109,22 @@ export const useDeleteNode = () => {
       update: (proxy) => {
         const previousData: { nodes: any[] } | null = proxy.readQuery({
           query: nodesQuery,
+          variables: {
+            query: {
+              ownerId: ownerId
+            }
+          }
         });
         // const newData = previousData?.nodes.filter(
         //   (node) => node._id !== response.data.deleteOneNode._id
         // );
         proxy.writeQuery({
           query: nodesQuery,
+          variables: {
+            query: {
+              ownerId: ownerId
+            }
+          },
           data: {
             nodes: previousData!.nodes.filter((node)=>{
               return node._id !== query._id && node.parentId !== query._id
