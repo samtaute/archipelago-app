@@ -26,10 +26,10 @@ const NodeTree = () => {
   const app = useContext(AppContext);
   const navigate = useNavigate();
 
-  const { nodes, loading, error } = useNodes();
+  const { nodes, loading, error } = useNodes(app?.currentUser?.id);
   const { updateNode } = useUpdateNode();
   const { insertNode } = useInsertNode();
-  const { deleteNode } = useDeleteNode();
+  const { deleteNode } = useDeleteNode(app?.currentUser?.id);
 
   const [draggingNode, setDraggingNode] = useState("");
   const [slotPath, setSlotPath] = useState<number[]>([]);
@@ -61,6 +61,15 @@ const NodeTree = () => {
     return <div>Loading...</div>;
   }
 
+  const handleStart = async () => {
+    await insertNode({
+      parentId: null,
+      text: "",
+      order: 100,
+      ownerId: app?.currentUser?.id,
+    });
+  };
+
   return (
     <div id="page">
       <DndContext
@@ -68,6 +77,7 @@ const NodeTree = () => {
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
       >
+        {nodes?.length === 0 && <button onClick={handleStart}>Start</button>}
         {nodeTree.map((node) => {
           return (
             <TreeNode
@@ -163,6 +173,7 @@ const NodeTree = () => {
         parentId: draggedNodeParentId,
         text: draggedNode.text,
         parentId_unset: !draggedNodeParentId ? true : false,
+        ownerId: app?.currentUser?.id
       }
     );
 
@@ -194,6 +205,7 @@ const NodeTree = () => {
             order: i * 100,
             parentId: siblings[i].parentId,
             text: siblings[i].text,
+            ownerId: app?.currentUser?.id,
           }
         );
       }
@@ -212,6 +224,7 @@ const NodeTree = () => {
         parentId: nodeData.parentId,
         text: "",
         order: await calculateOrder(siblings, targetIdx),
+        ownerId: app?.currentUser?.id,
       });
     } else if (event.key === "Backspace") {
       const selection = window.getSelection();
@@ -219,7 +232,7 @@ const NodeTree = () => {
       if (selection?.anchorOffset === 0) {
         event.preventDefault();
         await deleteNode({
-          _id: nodeData._id
+          _id: nodeData._id,
         });
       }
     } else if (event.key === "Tab" && event.shiftKey === false) {
@@ -237,8 +250,11 @@ const NodeTree = () => {
             {
               _id: nodeData._id,
               parentId: flatTree[pointerIdx].id,
+              ownerId: app?.currentUser?.id,
               order: 100,
-              text: event.currentTarget.innerHTML? event.currentTarget.innerHTML : "",
+              text: event.currentTarget.innerHTML
+                ? event.currentTarget.innerHTML
+                : "",
             }
           );
           return;
@@ -251,6 +267,7 @@ const NodeTree = () => {
             {
               _id: nodeData._id,
               text: nodeData.text ? nodeData.text : "",
+              ownerId: app?.currentUser?.id,
               parentId: flatTree[pointerIdx].parentId,
               order: await calculateOrder(
                 siblings,
@@ -277,7 +294,9 @@ const NodeTree = () => {
             },
             {
               _id: nodeData._id,
-              text: event.currentTarget.innerHTML? event.currentTarget.innerHTML: "",
+              text: event.currentTarget.innerHTML
+                ? event.currentTarget.innerHTML
+                : "",
               parentId: flatTree[pointerIdx].parentId,
               parentId_unset: !flatTree[pointerIdx].parentId ? true : false,
               order: await calculateOrder(
@@ -306,7 +325,7 @@ const NodeTree = () => {
       if (targetIdx < flatTree.length - 1) {
         setFocusId(flatTree[targetIdx + 1].id);
       }
-    } 
+    }
   }
   async function handleBlur(
     event: React.FocusEvent<HTMLDivElement>,
@@ -323,6 +342,7 @@ const NodeTree = () => {
           text: event.currentTarget.innerHTML,
           order: nodeData.order,
           parentId: nodeData.parentId,
+          ownerId: app?.currentUser?.id,
         }
       );
     }
@@ -365,6 +385,7 @@ const NodeTree = () => {
             order: i * 100,
             parentId: siblings[i].parentId,
             text: siblings[i].text,
+            ownerId: app?.currentUser?.id
           }
         );
       }

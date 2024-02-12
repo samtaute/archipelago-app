@@ -30,6 +30,7 @@ export type InsertManyPayload = {
 export type Mutation = {
   __typename?: 'Mutation';
   deleteManyNodes?: Maybe<DeleteManyPayload>;
+  deleteNodeAndChildren?: Maybe<Scalars['Int']['output']>;
   deleteOneNode?: Maybe<Node>;
   insertManyNodes?: Maybe<InsertManyPayload>;
   insertOneNode?: Maybe<Node>;
@@ -42,6 +43,11 @@ export type Mutation = {
 
 export type MutationDeleteManyNodesArgs = {
   query?: InputMaybe<NodeQueryInput>;
+};
+
+
+export type MutationDeleteNodeAndChildrenArgs = {
+  input?: InputMaybe<NodeQueryInput>;
 };
 
 
@@ -87,6 +93,7 @@ export type Node = {
   __typename?: 'Node';
   _id: Scalars['ObjectId']['output'];
   order: Scalars['Int']['output'];
+  ownerId: Scalars['ObjectId']['output'];
   parentId?: Maybe<Scalars['ObjectId']['output']>;
   text?: Maybe<Scalars['String']['output']>;
 };
@@ -94,6 +101,7 @@ export type Node = {
 export type NodeInsertInput = {
   _id?: InputMaybe<Scalars['ObjectId']['input']>;
   order: Scalars['Int']['input'];
+  ownerId: Scalars['ObjectId']['input'];
   parentId?: InputMaybe<Scalars['ObjectId']['input']>;
   text?: InputMaybe<Scalars['String']['input']>;
 };
@@ -119,6 +127,15 @@ export type NodeQueryInput = {
   order_lte?: InputMaybe<Scalars['Int']['input']>;
   order_ne?: InputMaybe<Scalars['Int']['input']>;
   order_nin?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
+  ownerId?: InputMaybe<Scalars['ObjectId']['input']>;
+  ownerId_exists?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerId_gt?: InputMaybe<Scalars['ObjectId']['input']>;
+  ownerId_gte?: InputMaybe<Scalars['ObjectId']['input']>;
+  ownerId_in?: InputMaybe<Array<InputMaybe<Scalars['ObjectId']['input']>>>;
+  ownerId_lt?: InputMaybe<Scalars['ObjectId']['input']>;
+  ownerId_lte?: InputMaybe<Scalars['ObjectId']['input']>;
+  ownerId_ne?: InputMaybe<Scalars['ObjectId']['input']>;
+  ownerId_nin?: InputMaybe<Array<InputMaybe<Scalars['ObjectId']['input']>>>;
   parentId?: InputMaybe<Scalars['ObjectId']['input']>;
   parentId_exists?: InputMaybe<Scalars['Boolean']['input']>;
   parentId_gt?: InputMaybe<Scalars['ObjectId']['input']>;
@@ -142,6 +159,8 @@ export type NodeQueryInput = {
 export enum NodeSortByInput {
   OrderAsc = 'ORDER_ASC',
   OrderDesc = 'ORDER_DESC',
+  OwneridAsc = 'OWNERID_ASC',
+  OwneridDesc = 'OWNERID_DESC',
   ParentidAsc = 'PARENTID_ASC',
   ParentidDesc = 'PARENTID_DESC',
   TextAsc = 'TEXT_ASC',
@@ -156,6 +175,8 @@ export type NodeUpdateInput = {
   order?: InputMaybe<Scalars['Int']['input']>;
   order_inc?: InputMaybe<Scalars['Int']['input']>;
   order_unset?: InputMaybe<Scalars['Boolean']['input']>;
+  ownerId?: InputMaybe<Scalars['ObjectId']['input']>;
+  ownerId_unset?: InputMaybe<Scalars['Boolean']['input']>;
   parentId?: InputMaybe<Scalars['ObjectId']['input']>;
   parentId_unset?: InputMaybe<Scalars['Boolean']['input']>;
   text?: InputMaybe<Scalars['String']['input']>;
@@ -186,19 +207,59 @@ export type UpdateManyPayload = {
   modifiedCount: Scalars['Int']['output'];
 };
 
-export type AllNodesQueryVariables = Exact<{ [key: string]: never; }>;
+export type NodesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllNodesQuery = { __typename?: 'Query', nodes: Array<{ __typename?: 'Node', _id: any, order: number, text?: string | null, parentId?: any | null } | null> };
+export type NodesQuery = { __typename?: 'Query', nodes: Array<{ __typename?: 'Node', _id: any, order: number, text?: string | null, parentId?: any | null } | null> };
 
-export type UpdateOneNodeMutationVariables = Exact<{
-  query: NodeQueryInput;
-  input: NodeUpdateInput;
+export type InsertOneNodeMutationVariables = Exact<{
+  data: NodeInsertInput;
 }>;
 
 
-export type UpdateOneNodeMutation = { __typename?: 'Mutation', node?: { __typename?: 'Node', _id: any } | null };
+export type InsertOneNodeMutation = { __typename?: 'Mutation', insertOneNode?: { __typename?: 'Node', _id: any, order: number, text?: string | null, parentId?: any | null } | null };
+
+export type NodeQueryVariables = Exact<{
+  query?: InputMaybe<NodeQueryInput>;
+}>;
 
 
-export const AllNodesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllNodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}}]}}]}}]} as unknown as DocumentNode<AllNodesQuery, AllNodesQueryVariables>;
-export const UpdateOneNodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOneNode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NodeQueryInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NodeUpdateInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"node"},"name":{"kind":"Name","value":"updateOneNode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}}]}}]}}]} as unknown as DocumentNode<UpdateOneNodeMutation, UpdateOneNodeMutationVariables>;
+export type NodeQuery = { __typename?: 'Query', node?: { __typename?: 'Node', _id: any, order: number, text?: string | null, parentId?: any | null } | null };
+
+export type UpdateOneNodeMutationVariables = Exact<{
+  query?: InputMaybe<NodeQueryInput>;
+  set: NodeUpdateInput;
+}>;
+
+
+export type UpdateOneNodeMutation = { __typename?: 'Mutation', updateOneNode?: { __typename?: 'Node', _id: any, order: number, text?: string | null, parentId?: any | null } | null };
+
+export type DeleteOneNodeMutationVariables = Exact<{
+  query: NodeQueryInput;
+}>;
+
+
+export type DeleteOneNodeMutation = { __typename?: 'Mutation', deleteOneNode?: { __typename?: 'Node', _id: any, order: number, text?: string | null, parentId?: any | null } | null };
+
+export type DeleteManyNodesMutationVariables = Exact<{
+  query: NodeQueryInput;
+}>;
+
+
+export type DeleteManyNodesMutation = { __typename?: 'Mutation', deleteManyNodes?: { __typename?: 'DeleteManyPayload', deletedCount: number } | null };
+
+export type DeleteNodeAndChildrenMutationVariables = Exact<{
+  input?: InputMaybe<NodeQueryInput>;
+}>;
+
+
+export type DeleteNodeAndChildrenMutation = { __typename?: 'Mutation', deleteNodeAndChildren?: number | null };
+
+
+export const NodesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}}]}}]}}]} as unknown as DocumentNode<NodesQuery, NodesQueryVariables>;
+export const InsertOneNodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InsertOneNode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NodeInsertInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"insertOneNode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}}]}}]}}]} as unknown as DocumentNode<InsertOneNodeMutation, InsertOneNodeMutationVariables>;
+export const NodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Node"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NodeQueryInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}}]}}]}}]} as unknown as DocumentNode<NodeQuery, NodeQueryVariables>;
+export const UpdateOneNodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOneNode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NodeQueryInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"set"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NodeUpdateInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOneNode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"set"},"value":{"kind":"Variable","name":{"kind":"Name","value":"set"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}}]}}]}}]} as unknown as DocumentNode<UpdateOneNodeMutation, UpdateOneNodeMutationVariables>;
+export const DeleteOneNodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteOneNode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NodeQueryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteOneNode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"parentId"}}]}}]}}]} as unknown as DocumentNode<DeleteOneNodeMutation, DeleteOneNodeMutationVariables>;
+export const DeleteManyNodesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteManyNodes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"NodeQueryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteManyNodes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deletedCount"}}]}}]}}]} as unknown as DocumentNode<DeleteManyNodesMutation, DeleteManyNodesMutationVariables>;
+export const DeleteNodeAndChildrenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteNodeAndChildren"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NodeQueryInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteNodeAndChildren"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<DeleteNodeAndChildrenMutation, DeleteNodeAndChildrenMutationVariables>;
