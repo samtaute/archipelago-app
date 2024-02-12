@@ -1,5 +1,5 @@
 import {
-  createBrowserRouter,
+  createHashRouter,
   RouterProvider,
 } from "react-router-dom";
 import ErrorPage from "./pages/Error";
@@ -18,9 +18,9 @@ import NodeTree from "./components/Tree";
 
 
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
-    path: "/archipelago-app/",
+    path: "/",
     errorElement: <ErrorPage />,
     children: [
     { index: true, element: <NodeTree/> },
