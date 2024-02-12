@@ -19,7 +19,7 @@ const WelcomePage = () => {
     if(isExistingUser){
       try{
         await app?.logIn(Credentials.emailPassword(email,password)); 
-        navigate('/archipelago-app/')
+        navigate('/')
       }catch(error){
         setError(true)
       }
