@@ -38,10 +38,10 @@ const TreeNode = ({
   if(slotConfig?.slotId === nodeData._id){
     slotActive = true; 
     if(slotConfig.pos === "bottom"){
-      slotStyle.bottom = 0; 
+      slotStyle.bottom = -4; 
     }else if (slotConfig.pos === "nested"){
-      slotStyle.bottom = 0; 
-      slotStyle.left = 50; 
+      slotStyle.bottom = -4; 
+      slotStyle.left = 40; 
     }else if (slotConfig.pos === "top"){
       slotStyle.top = 0; 
     }

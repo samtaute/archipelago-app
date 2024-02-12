@@ -4,6 +4,15 @@ import { decrementLastElement } from "./pathFunctions";
 export function createSlotConfig(slotPath: number[], nodeTree: TreeNodeData[]){
     const lastIdx = slotPath[slotPath.length-1];
 
+    const targetNode = findNode(slotPath, nodeTree); 
+
+    if (targetNode){
+        return {
+            slotId: targetNode._id,
+            pos: "top"
+        }
+    }
+
     if (lastIdx > 0){
         const siblingPath = decrementLastElement(slotPath); 
 

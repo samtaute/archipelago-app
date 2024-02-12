@@ -37,14 +37,14 @@ const NodeTree = () => {
 
   let nodeTree = [] as TreeNodeData[];
   let flatTree = [] as FlatNode[];
-  let slotConfig: {slotId: string, pos: string}|undefined; 
+  let slotConfig: { slotId: string; pos: string } | undefined;
 
   if (nodes) {
     nodeTree = buildTree(nodes);
     flatTree = flattenTree(nodeTree);
   }
-  if (slotPath.length > 0){
-    slotConfig = createSlotConfig(slotPath, nodeTree) 
+  if (slotPath.length > 0) {
+    slotConfig = createSlotConfig(slotPath, nodeTree);
   }
 
   useEffect(() => {
@@ -173,7 +173,7 @@ const NodeTree = () => {
         parentId: draggedNodeParentId,
         text: draggedNode.text,
         parentId_unset: !draggedNodeParentId ? true : false,
-        ownerId: app?.currentUser?.id
+        ownerId: app?.currentUser?.id,
       }
     );
 
@@ -385,7 +385,7 @@ const NodeTree = () => {
             order: i * 100,
             parentId: siblings[i].parentId,
             text: siblings[i].text,
-            ownerId: app?.currentUser?.id
+            ownerId: app?.currentUser?.id,
           }
         );
       }
