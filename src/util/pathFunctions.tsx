@@ -8,3 +8,14 @@ export function siblingsAtPath(slotPath: number[], treeNodes: TreeNodeData[]){
     }
     return sibs; 
   }
+
+//Decrements last element of an array. 
+export function decrementLastElement(arr: number[]) {
+  if (Array.isArray(arr) && arr.length > 0) {
+    const copy = [...arr]
+    copy[copy.length - 1] -= 1;
+    return copy; 
+  } else {
+      console.log("Input is not a valid non-empty array.");
+  }
+}
