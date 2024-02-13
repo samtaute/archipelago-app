@@ -31,6 +31,8 @@ const NodeTree = () => {
   const { insertNode } = useInsertNode();
   const { deleteNode } = useDeleteNode(app?.currentUser?.id);
 
+  const [creatingNode, setCreatingNode] = useState(false); 
+
   const [draggingNode, setDraggingNode] = useState("");
   const [slotPath, setSlotPath] = useState<number[]>([]);
   const [focusId, setFocusId] = useState("");
@@ -54,6 +56,23 @@ const NodeTree = () => {
     }
   }, [navigate, app]);
 
+  useEffect(()=>{
+    if(nodes?.length === 0 && !creatingNode){
+      setCreatingNode(true); 
+      handleStart()
+    }
+    setCreatingNode(false); 
+    async function handleStart(){
+      await insertNode({
+        parentId: null,
+        text: "",
+        order: 100,
+        ownerId: app?.currentUser?.id,
+      });
+    }
+  
+  }, [app, insertNode, nodes, creatingNode])
+
   if (error) {
     return <div>Encountered an Error</div>;
   }
@@ -61,14 +80,6 @@ const NodeTree = () => {
     return <div>Loading...</div>;
   }
 
-  const handleStart = async () => {
-    await insertNode({
-      parentId: null,
-      text: "",
-      order: 100,
-      ownerId: app?.currentUser?.id,
-    });
-  };
 
   return (
     <div id="page">
@@ -77,7 +88,6 @@ const NodeTree = () => {
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
       >
-        {nodes?.length === 0 && <button onClick={handleStart}>Start</button>}
         {nodeTree.map((node) => {
           return (
             <TreeNode
@@ -229,7 +239,8 @@ const NodeTree = () => {
     } else if (event.key === "Backspace") {
       const selection = window.getSelection();
 
-      if (selection?.anchorOffset === 0) {
+      //Start here  -- why isn't this if check working.
+      if (selection?.anchorOffset === 0 && nodes.length > 1) {
         event.preventDefault();
         await deleteNode({
           _id: nodeData._id,
