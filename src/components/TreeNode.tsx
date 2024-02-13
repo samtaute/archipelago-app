@@ -111,6 +111,7 @@ const TreeNode = ({
           handleKeyDown={handleKeyDown}
           focusId={focusId}
         />
+        {nodeData.order}
       </div>
       <div className="node-children">
         {!isCollapsed &&
