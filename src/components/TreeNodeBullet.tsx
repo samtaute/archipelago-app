@@ -10,6 +10,8 @@ const TreeNodeBullet = ({nodeData} : {nodeData: TreeNodeData}) => {
     }
   });
 
+  const isCollapsed = localStorage.getItem('collapsedList')?.includes(nodeData._id)
+
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -17,7 +19,7 @@ const TreeNodeBullet = ({nodeData} : {nodeData: TreeNodeData}) => {
     : undefined;
 
   return (
-    <a ref={setNodeRef} style={style} {...attributes} {...listeners} className="node-header-bullet">
+    <a ref={setNodeRef} style={style} {...attributes} {...listeners} className={`node-header-bullet ${isCollapsed ? "collapsed" : ""}`} >
       <svg width="18" height="18">
         <circle
           className="bullet"

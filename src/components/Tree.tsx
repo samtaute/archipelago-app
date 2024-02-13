@@ -52,7 +52,7 @@ const NodeTree = () => {
   useEffect(() => {
     if (!app?.currentUser) {
       setFocusId(""); //Todo remove this
-      navigate("/archipelago-app/login");
+      navigate("/login");
     }
   }, [navigate, app]);
 
