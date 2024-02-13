@@ -111,7 +111,6 @@ const TreeNode = ({
           handleKeyDown={handleKeyDown}
           focusId={focusId}
         />
-        {isCollapsed.toString()}
       </div>
       <div className="node-children">
         {!isCollapsed &&
