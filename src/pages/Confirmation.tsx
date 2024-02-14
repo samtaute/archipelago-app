@@ -28,7 +28,7 @@ const ConfirmationPage = ()=>{
     }, [app])
 
     const handleNavigateToLogin = ()=>{
-        navigate("/archipelago-app/login"); 
+        navigate("/login"); 
     }
 
     return (

@@ -13,11 +13,11 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n    query Nodes {\n        nodes{\n            _id\n            order\n            text\n            parentId\n        }\n    }\n": types.NodesDocument,
-    "\n    mutation InsertOneNode($data: NodeInsertInput!){\n        insertOneNode(data: $data){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n": types.InsertOneNodeDocument,
-    "\n    query Node($query: NodeQueryInput) {\n        node(query: $query){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n": types.NodeDocument,
-    "\n    mutation UpdateOneNode($query: NodeQueryInput, $set: NodeUpdateInput!){\n        updateOneNode(query: $query, set: $set){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n": types.UpdateOneNodeDocument,
-    "\n    mutation DeleteOneNode($query: NodeQueryInput!){\n        deleteOneNode(query: $query){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n": types.DeleteOneNodeDocument,
+    "\n    query Nodes($query: NodeQueryInput) {\n        nodes(query: $query){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n": types.NodesDocument,
+    "\n    mutation InsertOneNode($data: NodeInsertInput!){\n        insertOneNode(data: $data){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n": types.InsertOneNodeDocument,
+    "\n    query Node($query: NodeQueryInput) {\n        node(query: $query){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n": types.NodeDocument,
+    "\n    mutation UpdateOneNode($query: NodeQueryInput, $set: NodeUpdateInput!){\n        updateOneNode(query: $query, set: $set){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n": types.UpdateOneNodeDocument,
+    "\n    mutation DeleteOneNode($query: NodeQueryInput!){\n        deleteOneNode(query: $query){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n": types.DeleteOneNodeDocument,
     "\n    mutation DeleteManyNodes($query: NodeQueryInput!){\n        deleteManyNodes(query: $query){\n            deletedCount\n        }\n    }\n": types.DeleteManyNodesDocument,
     "\n    mutation DeleteNodeAndChildren($input: NodeQueryInput){\n        deleteNodeAndChildren(input: $input)\n    }\n": types.DeleteNodeAndChildrenDocument,
 };
@@ -39,23 +39,23 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query Nodes {\n        nodes{\n            _id\n            order\n            text\n            parentId\n        }\n    }\n"): (typeof documents)["\n    query Nodes {\n        nodes{\n            _id\n            order\n            text\n            parentId\n        }\n    }\n"];
+export function graphql(source: "\n    query Nodes($query: NodeQueryInput) {\n        nodes(query: $query){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n"): (typeof documents)["\n    query Nodes($query: NodeQueryInput) {\n        nodes(query: $query){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    mutation InsertOneNode($data: NodeInsertInput!){\n        insertOneNode(data: $data){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n"): (typeof documents)["\n    mutation InsertOneNode($data: NodeInsertInput!){\n        insertOneNode(data: $data){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n"];
+export function graphql(source: "\n    mutation InsertOneNode($data: NodeInsertInput!){\n        insertOneNode(data: $data){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n"): (typeof documents)["\n    mutation InsertOneNode($data: NodeInsertInput!){\n        insertOneNode(data: $data){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query Node($query: NodeQueryInput) {\n        node(query: $query){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n"): (typeof documents)["\n    query Node($query: NodeQueryInput) {\n        node(query: $query){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n"];
+export function graphql(source: "\n    query Node($query: NodeQueryInput) {\n        node(query: $query){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n"): (typeof documents)["\n    query Node($query: NodeQueryInput) {\n        node(query: $query){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    mutation UpdateOneNode($query: NodeQueryInput, $set: NodeUpdateInput!){\n        updateOneNode(query: $query, set: $set){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n"): (typeof documents)["\n    mutation UpdateOneNode($query: NodeQueryInput, $set: NodeUpdateInput!){\n        updateOneNode(query: $query, set: $set){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n"];
+export function graphql(source: "\n    mutation UpdateOneNode($query: NodeQueryInput, $set: NodeUpdateInput!){\n        updateOneNode(query: $query, set: $set){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n"): (typeof documents)["\n    mutation UpdateOneNode($query: NodeQueryInput, $set: NodeUpdateInput!){\n        updateOneNode(query: $query, set: $set){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    mutation DeleteOneNode($query: NodeQueryInput!){\n        deleteOneNode(query: $query){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n"): (typeof documents)["\n    mutation DeleteOneNode($query: NodeQueryInput!){\n        deleteOneNode(query: $query){\n            _id\n            order\n            text\n            parentId\n        }\n    }\n"];
+export function graphql(source: "\n    mutation DeleteOneNode($query: NodeQueryInput!){\n        deleteOneNode(query: $query){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n"): (typeof documents)["\n    mutation DeleteOneNode($query: NodeQueryInput!){\n        deleteOneNode(query: $query){\n            _id\n            order\n            text\n            parentId\n            ownerId\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -32,7 +32,7 @@ const TreeNode = ({
 
   useEffect(()=>{
     const collapsedList = localStorage.getItem("collapsedList");  
-    setIsCollapsed(collapsedList!.includes(nodeData._id));
+    setIsCollapsed(Boolean(collapsedList?.includes(nodeData._id)));
   },[nodeData])
 
 
