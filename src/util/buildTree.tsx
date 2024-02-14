@@ -1,12 +1,12 @@
 import { Node } from "../gql/graphql";
 
-export interface TreeNodeData{
-  _id: string, 
-  order: number, 
-  parentId: string, 
-  text: string|undefined, 
-  children: TreeNodeData[], 
-  path: number[]
+export interface TreeNodeData {
+  _id: string;
+  order: number;
+  parentId: string;
+  text: string | undefined;
+  children: TreeNodeData[];
+  path: number[];
 }
 
 export function buildTree(rawNodes: Node[]) {
@@ -19,11 +19,11 @@ export function buildTree(rawNodes: Node[]) {
   for (const record of rawNodes) {
     const newNode: TreeNodeData = {
       _id: record._id,
-      text: record.text ? record.text as string : undefined, 
+      text: record.text ? (record.text as string) : undefined,
       path: [],
       parentId: record.parentId,
       children: [] as TreeNodeData[],
-      order: record.order ? record.order as number : 100,
+      order: record.order ? (record.order as number) : 100,
     };
 
     nodeMap.set(record["_id"].toString(), newNode);
@@ -43,13 +43,18 @@ export function buildTree(rawNodes: Node[]) {
     }
     if (parentId) {
       const parent = nodeMap.get(parentId.toString());
-      const indexToInsert = parent.children.findIndex(
-        (child: TreeNodeData) => child.order > order
-      );
-      if (indexToInsert === -1) {
-        parent.children.push(newNode);
-      } else {
-        parent.children.splice(indexToInsert, 0, newNode);
+      if(!parent){
+        nodeCollection.push(newNode)
+      }
+      if (parent) {
+        const indexToInsert = parent.children.findIndex(
+          (child: TreeNodeData) => child.order > order
+        );
+        if (indexToInsert === -1) {
+          parent.children.push(newNode);
+        } else {
+          parent.children.splice(indexToInsert, 0, newNode);
+        }
       }
     }
   }
