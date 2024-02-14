@@ -1,11 +1,9 @@
-import { useNavigate } from "react-router-dom";
 import {
   useDeleteNode,
   useInsertNode,
-  useNodes,
   useUpdateNode,
 } from "../graphql/hooks";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -13,73 +11,34 @@ import {
   DragStartEvent,
 } from "@dnd-kit/core";
 import { AppContext } from "../contexts/realm-context";
-import { buildTree } from "../util/buildTree";
-import { FlatNode, flattenTree } from "../util/flattenTree";
 import TreeNode from "./TreeNode";
 import { findSlot } from "../util/findSlot";
 import { TreeNodeData } from "../util/buildTree";
 import { Node } from "../gql/graphql";
 import { siblingsAtPath } from "../util/pathFunctions";
 import { createSlotConfig } from "../util/createSlotConfig";
+import { FlatNode } from "../util/flattenTree";
+import { useNavigate } from "react-router-dom";
 
-const NodeTree = () => {
+const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: FlatNode[]}) => {
   const app = useContext(AppContext);
-  const navigate = useNavigate();
 
-  const { nodes, loading, error } = useNodes(app?.currentUser?.id);
+  const navigate = useNavigate(); 
+
   const { updateNode } = useUpdateNode();
   const { insertNode } = useInsertNode();
   const { deleteNode } = useDeleteNode(app?.currentUser?.id);
 
-  const [creatingNode, setCreatingNode] = useState(false); 
 
   const [draggingNode, setDraggingNode] = useState("");
   const [slotPath, setSlotPath] = useState<number[]>([]);
   const [focusId, setFocusId] = useState("");
 
-  let nodeTree = [] as TreeNodeData[];
-  let flatTree = [] as FlatNode[];
   let slotConfig: { slotId: string; pos: string } | undefined;
 
-  if (nodes) {
-    nodeTree = buildTree(nodes);
-    flatTree = flattenTree(nodeTree);
-  }
   if (slotPath.length > 0) {
     slotConfig = createSlotConfig(slotPath, nodeTree);
   }
-
-  useEffect(() => {
-    if (!app?.currentUser) {
-      setFocusId(""); //Todo remove this
-      navigate("/login");
-    }
-  }, [navigate, app]);
-
-  useEffect(()=>{
-    if(nodes?.length === 0 && !creatingNode){
-      setCreatingNode(true); 
-      handleStart()
-    }
-    setCreatingNode(false); 
-    async function handleStart(){
-      await insertNode({
-        parentId: null,
-        text: "",
-        order: 100,
-        ownerId: app?.currentUser?.id,
-      });
-    }
-  
-  }, [app, insertNode, nodes, creatingNode])
-
-  if (error) {
-    return <div>Encountered an Error</div>;
-  }
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
 
   return (
     <div id="page">
@@ -119,6 +78,11 @@ const NodeTree = () => {
 
   //handleDragEnd updates the node being dragged based on the current slot path.
   async function handleDragEnd(event: DragEndEvent) {
+
+    //expand node if active and over id are the same, i.e. the user clicks on a node without dragging.
+    if(event.active.id === event.over?.id){
+      navigate("/"+event.active.id.toString())
+    }
     if (
       slotPath
         .toString()
@@ -133,6 +97,9 @@ const NodeTree = () => {
     }
     const draggedNode = findNode(event.active!.data!.current!.path);
     const draggedNodeId = draggedNode._id;
+    if(slotPath.length === 0){
+      return; 
+    }
 
     let draggedNodeParentId;
     if (slotPath.length === 1) {
@@ -239,8 +206,7 @@ const NodeTree = () => {
     } else if (event.key === "Backspace") {
       const selection = window.getSelection();
 
-      //Start here  -- why isn't this if check working.
-      if (selection?.anchorOffset === 0 && nodes.length > 1) {
+      if (selection?.anchorOffset === 0 && nodeTree.length + nodeTree[0].children.length > 1) {
         event.preventDefault();
         await deleteNode({
           _id: nodeData._id,

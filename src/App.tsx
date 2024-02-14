@@ -14,7 +14,8 @@ import {
 } from "@apollo/client";
 import { useContext } from "react";
 import { AppContext } from "./contexts/realm-context";
-import NodeTree from "./components/Tree";
+import { SubtreeEditor, TreeEditor } from "./pages/TreeEditor";
+import RootLayout from "./components/ui/RootLayout";
 
 
 
@@ -22,10 +23,12 @@ const router = createHashRouter([
   {
     path: "/",
     errorElement: <ErrorPage />,
+    element: <RootLayout/>,
     children: [
-    { index: true, element: <NodeTree/> },
+    { index: true, element: <TreeEditor/> },
       { path: "login", element: <WelcomePage/> },
-      { path: "confirmation", element: <ConfirmationPage/>}
+      { path: "confirmation", element: <ConfirmationPage/>},
+      { path: ":nodeId", element: <SubtreeEditor/>}
     ],
   },
 ]);

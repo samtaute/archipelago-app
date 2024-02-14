@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import {
   deleteNodeAndChildrenMutation,
   insertNodeMutation,
+  nodeSubtreeQuery,
   nodesQuery,
   updateNodeMutation,
 } from "./queries";
@@ -19,6 +20,14 @@ export const useNodes = (ownerId: string|undefined) => {
   });
   return { nodes: data?.nodes as Node[], loading, error: Boolean(error) };
 };
+
+export const useNodeSubtree = (nodeId: string|undefined) => {
+  const {loading, error, data} = useQuery(nodeSubtreeQuery, {
+    variables: {input: nodeId}
+  });
+  return {nodes: data?.nodeSubtree, loading, error: Boolean(error)}
+}
+
 
 export const useInsertNode = () => {
   const [mutate, { loading }] = useMutation(insertNodeMutation);

@@ -12,6 +12,19 @@ export const nodesQuery = gql`
     }
 `  
 
+export const nodeSubtreeQuery = gql`
+    query NodeSubtree($input: ObjectId){
+        nodeSubtree(input: $input){
+            _id
+            parentId
+            order
+            text
+            ownerId
+        }
+    }
+`
+
+
 export const insertNodeMutation = gql`
     mutation InsertOneNode($data: NodeInsertInput!){
         insertOneNode(data: $data){
