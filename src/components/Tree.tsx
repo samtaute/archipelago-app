@@ -67,9 +67,11 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
 
   //drag handlers
   function handleDragStart(event: DragStartEvent) {
-    setDraggingNode(event.active.id as string);
+    console.log(event)
   }
   function handleDragMove(event: DragMoveEvent) {
+    setDraggingNode(event.active.id as string);
+
     if (event.collisions && event.collisions.length > 0) {
       const targetedSlot = findSlot(event, nodeTree, flatTree);
       setSlotPath(targetedSlot);
@@ -80,7 +82,7 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
   async function handleDragEnd(event: DragEndEvent) {
 
     //expand node if active and over id are the same, i.e. the user clicks on a node without dragging.
-    if(event.active.id === event.over?.id){
+    if(event.active.id === event.over?.id && draggingNode === ""){
       navigate("/"+event.active.id.toString())
     }
     if (

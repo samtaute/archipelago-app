@@ -23,8 +23,7 @@ body{
   margin-top: 4rem; 
   position: relative; 
   overflow: hidden;
-  padding-bottom: 2rem;
-  padding-left: 3rem;
+  padding: 2rem;
 }
 
 /*.tree-node */
@@ -80,7 +79,7 @@ body{
   left: 500px;   
   /* background-color: rgb(220, 217, 217); */
   border-radius: 9px;
-  cursor: grab; 
+  cursor: pointer; 
   width: 18px;
   height: 18px;
   display: block;
@@ -88,17 +87,13 @@ body{
 }
 
 .node-header-bullet:hover{
-  background-color: rgb(90, 90, 98);
+  background-color: rgb(99, 98, 98);
 }
-
-.node-header-bullet.collapsed{
-  background-color: rgb(190, 190, 190);
-}
-.node-header-bullet:active{
+/* .node-header-bullet:active{
   cursor: grabbing; 
   cursor: -moz-grabbing;
   cursor: -webkit-grabbing;
-}
+} */
 
 
 /* NODE-HEADER-TEXT */
