@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useUpdateNode } from "../../graphql/hooks";
 import { TreeNodeData } from "../../util/buildTree";
+import { AppContext } from "../../contexts/realm-context";
 
 export const Checkbox = ({ nodeData }: { nodeData: TreeNodeData }) => {
-  const [checked, setCheck] = useState(false);
+  const app = useContext(AppContext); 
+  console.log(nodeData.status);
+  const [checked, setCheck] = useState(nodeData.status === "done");
 
   const { updateNode } = useUpdateNode();
 
@@ -16,7 +19,7 @@ export const Checkbox = ({ nodeData }: { nodeData: TreeNodeData }) => {
         _id: nodeData._id,
         text: nodeData.text,
         parentId: nodeData.parentId,
-        ownerId: nodeData.parentId,
+        ownerId: app?.currentUser?.id,
         status: checked ? "todo" : "done",
         order: nodeData.order,
       }
