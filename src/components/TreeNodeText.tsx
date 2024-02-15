@@ -45,15 +45,35 @@ const TreeNodeText = ({
   }, [focusId, nodeData._id]);
 
   useEffect(() => {
-      thisComponent.current!.focus();
+    thisComponent.current!.focus();
   }, []);
+
+  const { status } = nodeData;
+
+  if (status === "done") {
+    return (
+      <s>
+        <div
+          className="node-header-text"
+          contentEditable
+          suppressContentEditableWarning
+          dangerouslySetInnerHTML={{
+            __html: nodeData.text ? nodeData.text : "",
+          }}
+          onBlur={blurHandler}
+          onKeyDown={keyDownHandler}
+          ref={thisComponent}
+        ></div>
+      </s>
+    );
+  }
 
   return (
     <div
       className="node-header-text"
       contentEditable
       suppressContentEditableWarning
-      dangerouslySetInnerHTML={{ __html: nodeData.text ? nodeData.text : '' }}
+      dangerouslySetInnerHTML={{ __html: nodeData.text ? nodeData.text : "" }}
       onBlur={blurHandler}
       onKeyDown={keyDownHandler}
       ref={thisComponent}

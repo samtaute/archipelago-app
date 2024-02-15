@@ -1,18 +1,17 @@
-import { useDraggable} from "@dnd-kit/core";
-import { TreeNodeData } from "../util/buildTree"
+import { useDraggable } from "@dnd-kit/core";
+import { TreeNodeData } from "../util/buildTree";
 
-
-const TreeNodeBullet = ({nodeData} : {nodeData: TreeNodeData}) => {
+const TreeNodeBullet = ({ nodeData }: { nodeData: TreeNodeData }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: nodeData._id.toString(),
     data: {
-        path: nodeData.path,
-    }
+      path: nodeData.path,
+    },
   });
 
-
-
-  const isCollapsed = localStorage.getItem('collapsedList')?.includes(nodeData._id)
+  const isCollapsed = localStorage
+    .getItem("collapsedList")
+    ?.includes(nodeData._id);
 
   const style = transform
     ? {
@@ -20,22 +19,36 @@ const TreeNodeBullet = ({nodeData} : {nodeData: TreeNodeData}) => {
       }
     : undefined;
 
-
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>)=>{
+    event.preventDefault();
+    console.log('test')
+    if(event.shiftKey === true){
+      console.log('complete')
+    }
+  }
 
   return (
-    <a ref={setNodeRef} style={style} {...attributes} {...listeners} className={`node-header-bullet ${isCollapsed ? "collapsed" : ""}`} >
-      <svg width="18" height="18">
-        <circle
-          className="bullet"
-          cx="9"
-          cy="9"
-          r="3.5"
-          stroke="rgb(75, 81, 85)"
-          strokeWidth="1"
-          fill="rgb(75, 81, 85)"
-        />
-      </svg>
-    </a>
+    <div onClick={handleClick}>
+      <a
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        className={`node-header-bullet ${isCollapsed ? "collapsed" : ""}`}
+      >
+        <svg width="18" height="18">
+          <circle
+            className="bullet"
+            cx="9"
+            cy="9"
+            r="3.5"
+            stroke="rgb(75, 81, 85)"
+            strokeWidth="1"
+            fill="rgb(75, 81, 85)"
+          />
+        </svg>
+      </a>
+    </div>
   );
 };
 
