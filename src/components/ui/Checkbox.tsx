@@ -5,7 +5,6 @@ import { AppContext } from "../../contexts/realm-context";
 
 export const Checkbox = ({ nodeData }: { nodeData: TreeNodeData }) => {
   const app = useContext(AppContext); 
-  console.log(nodeData.status);
   const [checked, setCheck] = useState(nodeData.status === "done");
 
   const { updateNode } = useUpdateNode();

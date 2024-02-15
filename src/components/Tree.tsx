@@ -203,12 +203,14 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
       const siblings = siblingsAtPath(nodeData.path, nodeTree);
       const targetIdx = nodeData.path[nodeData.path.length - 1] + 1;
 
-      await insertNode({
+      const result = await insertNode({
         parentId: nodeData.parentId,
         text: "",
         order: await calculateOrder(siblings, targetIdx),
         ownerId: app?.currentUser?.id,
+        status: "todo"
       });
+      setFocusId(result._id);  
     } else if (event.key === "Backspace") {
       const selection = window.getSelection();
 

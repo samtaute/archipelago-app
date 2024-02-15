@@ -71,7 +71,7 @@ export const useInsertNode = () => {
         });
       },
     });
-    return result.data.node;
+    return result.data.insertOneNode; 
   };
 
   return { insertNode, loading };

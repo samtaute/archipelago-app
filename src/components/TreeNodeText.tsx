@@ -44,9 +44,9 @@ const TreeNodeText = ({
     }
   }, [focusId, nodeData._id]);
 
-  useEffect(() => {
-    thisComponent.current!.focus();
-  }, []);
+  // useEffect(() => {
+  //   thisComponent.current!.focus();
+  // }, []);
 
   const { status } = nodeData;
 
