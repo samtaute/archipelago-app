@@ -114,7 +114,7 @@ const TreeNode = ({
           handleKeyDown={handleKeyDown}
           focusId={focusId}
         />
-        <Checkbox nodeData={nodeData}/>
+          <Checkbox nodeData={nodeData}/>
       </div>
       <div className="node-children">
         {!isCollapsed &&

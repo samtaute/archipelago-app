@@ -40,14 +40,14 @@ export const EmptyCheckbox = ({ onClick }: { onClick: any }) => {
   return (
     <div onClick={onClick}>
       <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M16.75 1H3.25C2.00736 1 1 2.00736 1 3.25V16.75C1 17.9926 2.00736 19 3.25 19H16.75C17.9926 19 19 17.9926 19 16.75V3.25C19 2.00736 17.9926 1 16.75 1Z"
+          d="M11.5 1H2.5C1.67157 1 1 1.67157 1 2.5V11.5C1 12.3284 1.67157 13 2.5 13H11.5C12.3284 13 13 12.3284 13 11.5V2.5C13 1.67157 12.3284 1 11.5 1Z"
           stroke="black"
           strokeLinejoin="round"
         />
