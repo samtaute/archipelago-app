@@ -8,7 +8,6 @@ import {
   DndContext,
   DragEndEvent,
   DragMoveEvent,
-  DragStartEvent,
 } from "@dnd-kit/core";
 import { AppContext } from "../contexts/realm-context";
 import TreeNode from "./TreeNode";
@@ -48,6 +47,7 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
         onDragEnd={handleDragEnd}
       >
         {nodeTree.map((node) => {
+
           return (
             <TreeNode
               nodeData={node}
@@ -66,9 +66,13 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
   );
 
   //drag handlers
-  function handleDragStart(event: DragStartEvent) {
-    console.log(event)
+  // function handleDragStart(event: DragStartEvent) {
+  //   console.log(event)
+  // }
+  function handleDragStart(){
+  //do nothing for now
   }
+
   function handleDragMove(event: DragMoveEvent) {
     setDraggingNode(event.active.id as string);
 
@@ -105,7 +109,6 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
 
     let draggedNodeParentId;
     if (slotPath.length === 1) {
-      console.log("path");
       draggedNodeParentId = null;
     } else {
       draggedNodeParentId = findNode(
@@ -153,6 +156,7 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
         text: draggedNode.text,
         parentId_unset: !draggedNodeParentId ? true : false,
         ownerId: app?.currentUser?.id,
+        status: draggedNode.status,
       }
     );
 
@@ -230,6 +234,7 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
               _id: nodeData._id,
               parentId: flatTree[pointerIdx].id,
               ownerId: app?.currentUser?.id,
+              status: nodeData.status,
               order: 100,
               text: event.currentTarget.innerHTML
                 ? event.currentTarget.innerHTML
@@ -277,6 +282,8 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
                 ? event.currentTarget.innerHTML
                 : "",
               parentId: flatTree[pointerIdx].parentId,
+              ownerId: app?.currentUser?.id,
+              status: nodeData.status,
               parentId_unset: !flatTree[pointerIdx].parentId ? true : false,
               order: await calculateOrder(
                 siblings,
@@ -365,6 +372,7 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
             parentId: siblings[i].parentId,
             text: siblings[i].text,
             ownerId: app?.currentUser?.id,
+            status: siblings[i].status,
           }
         );
       }

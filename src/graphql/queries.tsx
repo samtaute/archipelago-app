@@ -8,6 +8,7 @@ export const nodesQuery = gql`
             text
             parentId
             ownerId
+            status
         }
     }
 `  
@@ -20,6 +21,7 @@ export const nodeSubtreeQuery = gql`
             order
             text
             ownerId
+            status
         }
     }
 `
@@ -33,6 +35,7 @@ export const insertNodeMutation = gql`
             text
             parentId
             ownerId
+            status
         }
     }
 `
@@ -45,6 +48,7 @@ export const nodeByIdQuery = gql`
             text
             parentId
             ownerId
+            status
         }
     }
 `
@@ -57,6 +61,7 @@ export const updateNodeMutation = gql`
             text
             parentId
             ownerId
+            status
         }
     }
 `
@@ -64,10 +69,6 @@ export const deleteNodeMutation = gql`
     mutation DeleteOneNode($query: NodeQueryInput!){
         deleteOneNode(query: $query){
             _id
-            order
-            text
-            parentId
-            ownerId
         }
     }
 `

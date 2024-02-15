@@ -13,6 +13,7 @@ import {
   NodeUpdateInput,
 } from "../gql/graphql";
 
+
 export const useNodes = (ownerId: string|undefined) => {
   const { loading, error, data } = useQuery(nodesQuery, {
     // pollInterval: 500,
@@ -37,16 +38,16 @@ export const useInsertNode = () => {
       variables: {
         data,
       },
-      optimisticResponse: {
-        insertOneNode: {
-          _id: "temp",
-          __typename: "Node",
-          order: data.order,
-          parentId: data.parentId,
-          text: data.text,
-          ownerId: data.ownerId,
-        },
-      },
+      // optimisticResponse: {
+      //   insertOneNode: {
+      //     _id: "temp",
+      //     __typename: "Node",
+      //     order: data.order,
+      //     parentId: data.parentId,
+      //     text: data.text,
+      //     ownerId: data.ownerId,
+      //   },
+      // },
       update: (proxy, response) => {
         const previousData: { nodes: any[] } | null = proxy.readQuery({
           query: nodesQuery,
@@ -96,6 +97,7 @@ export const useUpdateNode = () => {
           text: set.text,
           parentId_unset: set.parentId_unset,
           ownerId: set.ownerId,
+          status: set.status,
         },
       },
     });
