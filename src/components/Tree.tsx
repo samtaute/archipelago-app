@@ -1,40 +1,43 @@
-import {
-  useDeleteNode,
-  useInsertNode,
-  useUpdateNode,
-} from "../graphql/hooks";
+import { useDeleteNode, useUpdateNode } from "../graphql/hooks";
 import { useContext, useState } from "react";
-import {
-  DndContext,
-  DragEndEvent,
-  DragMoveEvent,
-} from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragMoveEvent } from "@dnd-kit/core";
 import { AppContext } from "../contexts/realm-context";
 import TreeNode from "./TreeNode";
 import { findSlot } from "../util/findSlot";
 import { TreeNodeData } from "../util/buildTree";
 import { Node } from "../gql/graphql";
 import { siblingsAtPath } from "../util/pathFunctions";
-import { createSlotConfig } from "../util/createSlotConfig";
+import { createSlotConfig} from "../util/createSlotConfig";
 import { FlatNode } from "../util/flattenTree";
 import { useNavigate } from "react-router-dom";
+import { useInsertAt } from "./hooks/useInsertAt";
 
-const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: FlatNode[]}) => {
+const NodeTree = ({
+  nodeTree,
+  flatTree,
+}: {
+  nodeTree: TreeNodeData[];
+  flatTree: FlatNode[];
+}) => {
+
   const app = useContext(AppContext);
+  const navigate = useNavigate();
 
-  const navigate = useNavigate(); 
+  //CRUD hooks
+  const {insertAt} = useInsertAt(); 
 
   const { updateNode } = useUpdateNode();
-  const { insertNode } = useInsertNode();
   const { deleteNode } = useDeleteNode(app?.currentUser?.id);
 
-
+  //UI state
   const [draggingNode, setDraggingNode] = useState("");
   const [slotPath, setSlotPath] = useState<number[]>([]);
   const [focusId, setFocusId] = useState("");
 
-  let slotConfig: { slotId: string; pos: string } | undefined;
 
+
+
+  let slotConfig: { slotId: string; pos: string } | undefined;
   if (slotPath.length > 0) {
     slotConfig = createSlotConfig(slotPath, nodeTree);
   }
@@ -47,7 +50,6 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
         onDragEnd={handleDragEnd}
       >
         {nodeTree.map((node) => {
-
           return (
             <TreeNode
               nodeData={node}
@@ -69,8 +71,8 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
   // function handleDragStart(event: DragStartEvent) {
   //   console.log(event)
   // }
-  function handleDragStart(){
-  //do nothing for now
+  function handleDragStart() {
+    //do nothing for now
   }
 
   function handleDragMove(event: DragMoveEvent) {
@@ -84,10 +86,9 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
 
   //handleDragEnd updates the node being dragged based on the current slot path.
   async function handleDragEnd(event: DragEndEvent) {
-
     //expand node if active and over id are the same, i.e. the user clicks on a node without dragging.
-    if(event.active.id === event.over?.id && draggingNode === ""){
-      navigate("/"+event.active.id.toString())
+    if (event.active.id === event.over?.id && draggingNode === "") {
+      navigate("/" + event.active.id.toString());
     }
     if (
       slotPath
@@ -103,8 +104,8 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
     }
     const draggedNode = findNode(event.active!.data!.current!.path);
     const draggedNodeId = draggedNode._id;
-    if(slotPath.length === 0){
-      return; 
+    if (slotPath.length === 0) {
+      return;
     }
 
     let draggedNodeParentId;
@@ -145,7 +146,6 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
       }
       return sibs;
     }
-
     await updateNode(
       {
         _id: draggedNodeId,
@@ -200,21 +200,22 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
   ) {
     if (event.key === "Enter") {
       event.preventDefault();
-      const siblings = siblingsAtPath(nodeData.path, nodeTree);
-      const targetIdx = nodeData.path[nodeData.path.length - 1] + 1;
 
-      const result = await insertNode({
-        parentId: nodeData.parentId,
-        text: "",
-        order: await calculateOrder(siblings, targetIdx),
-        ownerId: app?.currentUser?.id,
-        status: "todo"
-      });
-      setFocusId(result._id);  
+      //Generate insertPath by incrementing the last index in node path by 1. 
+      const insertPath = [...nodeData.path]; 
+      insertPath[insertPath.length-1]++; 
+  
+      //get id of inserted node and set as focus
+      const {_id} = await insertAt(insertPath, nodeTree); 
+      setFocusId(_id)
+
     } else if (event.key === "Backspace") {
       const selection = window.getSelection();
 
-      if (selection?.anchorOffset === 0 && nodeTree.length + nodeTree[0].children.length > 1) {
+      if (
+        selection?.anchorOffset === 0 &&
+        nodeTree.length + nodeTree[0].children.length > 1
+      ) {
         event.preventDefault();
         await deleteNode({
           _id: nodeData._id,
@@ -331,6 +332,7 @@ const NodeTree = ({nodeTree, flatTree}: {nodeTree: TreeNodeData[], flatTree: Fla
           order: nodeData.order,
           parentId: nodeData.parentId,
           ownerId: app?.currentUser?.id,
+          status: nodeData.status,
         }
       );
     }

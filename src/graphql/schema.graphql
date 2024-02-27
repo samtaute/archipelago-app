@@ -1,125 +1,103 @@
-enum NodeSortByInput {
-  ORDER_ASC
-  ORDER_DESC
-  OWNERID_ASC
-  OWNERID_DESC
-  STATUS_DESC
-  _ID_ASC
-  _ID_DESC
-  PARENTID_ASC
-  PARENTID_DESC
-  TEXT_ASC
-  TEXT_DESC
-  STATUS_ASC
+input NodeQueryInput {
+  ownerId_gt: ObjectId
+  parentId_gte: ObjectId
+  status_in: [String]
+  ownerId_exists: Boolean
+  status_gt: String
+  ownerId_in: [ObjectId]
+  _id: ObjectId
+  order: Int
+  order_ne: Int
+  ownerId_gte: ObjectId
+  text: String
+  text_gt: String
+  _id_lte: ObjectId
+  status_gte: String
+  text_exists: Boolean
+  order_lt: Int
+  parentId_ne: ObjectId
+  parentId_nin: [ObjectId]
+  order_in: [Int]
+  _id_gt: ObjectId
+  ownerId_lte: ObjectId
+  ownerId: ObjectId
+  parentId_in: [ObjectId]
+  status: String
+  ownerId_lt: ObjectId
+  _id_lt: ObjectId
+  order_gte: Int
+  _id_in: [ObjectId]
+  status_lte: String
+  parentId_gt: ObjectId
+  parentId_lte: ObjectId
+  parentId_lt: ObjectId
+  status_ne: String
+  ownerId_ne: ObjectId
+  status_nin: [String]
+  parentId_exists: Boolean
+  text_lte: String
+  parentId: ObjectId
+  text_nin: [String]
+  text_in: [String]
+  status_lt: String
+  AND: [NodeQueryInput!]
+  status_exists: Boolean
+  order_nin: [Int]
+  _id_gte: ObjectId
+  order_lte: Int
+  text_gte: String
+  text_lt: String
+  _id_exists: Boolean
+  _id_ne: ObjectId
+  order_exists: Boolean
+  ownerId_nin: [ObjectId]
+  order_gt: Int
+  text_ne: String
+  _id_nin: [ObjectId]
+  OR: [NodeQueryInput!]
 }
-type Mutation {
-  deleteManyNodes(query: NodeQueryInput): DeleteManyPayload
-  deleteNodeAndChildren(input: NodeQueryInput): Int
-  deleteOneNode(query: NodeQueryInput!): Node
-  insertManyNodes(data: [NodeInsertInput!]!): InsertManyPayload
-  insertOneNode(data: NodeInsertInput!): Node
-  replaceOneNode(query: NodeQueryInput, data: NodeInsertInput!): Node
-  updateManyNodes(query: NodeQueryInput, set: NodeUpdateInput!): UpdateManyPayload
-  updateOneNode(query: NodeQueryInput, set: NodeUpdateInput!): Node
-  upsertOneNode(query: NodeQueryInput, data: NodeInsertInput!): Node
+input NodeInsertInput {
+  status: String
+  _id: ObjectId
+  order: Int!
+  parentId: ObjectId
+  text: String
+  ownerId: ObjectId!
 }
-type UpdateManyPayload {
-  matchedCount: Int!
-  modifiedCount: Int!
+scalar ObjectId
+input NodeUpdateInput {
+  text: String
+  _id: ObjectId
+  ownerId: ObjectId
+  order: Int
+  text_unset: Boolean
+  order_inc: Int
+  parentId: ObjectId
+  ownerId_unset: Boolean
+  status: String
+  _id_unset: Boolean
+  order_unset: Boolean
+  parentId_unset: Boolean
+  status_unset: Boolean
 }
 type Query {
   node(query: NodeQueryInput): Node
   nodeSubtree(input: ObjectId): [Node]
   nodes(query: NodeQueryInput, limit: Int = 100, sortBy: NodeSortByInput): [Node]!
 }
-input NodeInsertInput {
-  ownerId: ObjectId!
-  status: String
-  _id: ObjectId
-  order: Int!
-  parentId: ObjectId
-  text: String
-}
-input NodeUpdateInput {
-  order: Int
-  ownerId_unset: Boolean
-  order_unset: Boolean
-  parentId: ObjectId
-  order_inc: Int
-  ownerId: ObjectId
-  _id_unset: Boolean
-  status: String
-  parentId_unset: Boolean
-  text: String
-  status_unset: Boolean
-  _id: ObjectId
-  text_unset: Boolean
-}
 type DeleteManyPayload {
   deletedCount: Int!
-}
-input NodeQueryInput {
-  order_exists: Boolean
-  ownerId_gte: ObjectId
-  parentId_exists: Boolean
-  status_lt: String
-  text_lte: String
-  status_in: [String]
-  text: String
-  ownerId: ObjectId
-  text_gte: String
-  text_in: [String]
-  _id: ObjectId
-  order_ne: Int
-  ownerId_nin: [ObjectId]
-  order_gte: Int
-  parentId_ne: ObjectId
-  parentId_lte: ObjectId
-  order_nin: [Int]
-  _id_gt: ObjectId
-  AND: [NodeQueryInput!]
-  parentId_gte: ObjectId
-  text_exists: Boolean
-  status_gte: String
-  _id_in: [ObjectId]
-  ownerId_in: [ObjectId]
-  text_gt: String
-  status_lte: String
-  order_in: [Int]
-  _id_gte: ObjectId
-  parentId_gt: ObjectId
-  _id_ne: ObjectId
-  _id_exists: Boolean
-  parentId: ObjectId
-  status_gt: String
-  ownerId_gt: ObjectId
-  _id_lte: ObjectId
-  parentId_in: [ObjectId]
-  status_nin: [String]
-  status_exists: Boolean
-  order: Int
-  order_lte: Int
-  ownerId_lt: ObjectId
-  parentId_lt: ObjectId
-  parentId_nin: [ObjectId]
-  text_nin: [String]
-  text_lt: String
-  status: String
-  order_lt: Int
-  ownerId_exists: Boolean
-  OR: [NodeQueryInput!]
-  order_gt: Int
-  _id_lt: ObjectId
-  status_ne: String
-  ownerId_ne: ObjectId
-  ownerId_lte: ObjectId
-  text_ne: String
-  _id_nin: [ObjectId]
 }
 type InsertManyPayload {
   insertedIds: [ObjectId]!
 }
-scalar ObjectId
+type UpdateManyPayload {
+  matchedCount: Int!
+  modifiedCount: Int!
+}
+type DefaultPayload {
+  status: String!
+}
 type Node {
   _id: ObjectId!
   order: Int!
@@ -127,4 +105,31 @@ type Node {
   parentId: ObjectId
   status: String
   text: String
+}
+enum NodeSortByInput {
+  _ID_DESC
+  ORDER_ASC
+  PARENTID_DESC
+  TEXT_ASC
+  OWNERID_DESC
+  STATUS_ASC
+  STATUS_DESC
+  _ID_ASC
+  ORDER_DESC
+  PARENTID_ASC
+  TEXT_DESC
+  OWNERID_ASC
+}
+type Mutation {
+  bulkUpsertNodes(input: [NodeUpdateInput]): DefaultPayload
+  deleteManyNodes(query: NodeQueryInput): DeleteManyPayload
+  deleteNodeAndChildren(input: NodeQueryInput): Int
+  deleteOneNode(query: NodeQueryInput!): Node
+  insertManyNodes(data: [NodeInsertInput!]!): InsertManyPayload
+  insertOneNode(data: NodeInsertInput!): Node
+  replaceOneNode(query: NodeQueryInput, data: NodeInsertInput!): Node
+  resetOrders(input: ObjectId): Int
+  updateManyNodes(query: NodeQueryInput, set: NodeUpdateInput!): UpdateManyPayload
+  updateOneNode(query: NodeQueryInput, set: NodeUpdateInput!): Node
+  upsertOneNode(query: NodeQueryInput, data: NodeInsertInput!): Node
 }

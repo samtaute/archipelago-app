@@ -114,6 +114,8 @@ const TreeNode = ({
           handleKeyDown={handleKeyDown}
           focusId={focusId}
         />
+        {nodeData.order}----
+        {nodeData._id}
           <Checkbox nodeData={nodeData}/>
       </div>
       <div className="node-children">

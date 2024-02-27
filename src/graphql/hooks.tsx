@@ -1,9 +1,11 @@
 import { useMutation, useQuery } from "@apollo/client";
 import {
+  bulkWriteMutation,
   deleteNodeAndChildrenMutation,
   insertNodeMutation,
   nodeSubtreeQuery,
   nodesQuery,
+  resetOrdersMutation,
   updateNodeMutation,
 } from "./queries";
 import {
@@ -12,58 +14,117 @@ import {
   NodeQueryInput,
   NodeUpdateInput,
 } from "../gql/graphql";
+import { BSON } from "realm-web";
+import { useContext } from "react";
+import { AppContext } from "../contexts/realm-context";
 
-
-export const useNodes = (ownerId: string|undefined) => {
+export const useNodes = (ownerId: string | undefined) => {
   const { loading, error, data } = useQuery(nodesQuery, {
     // pollInterval: 500,
-    variables: {query: {ownerId}}
+    variables: { query: { ownerId } },
   });
   return { nodes: data?.nodes as Node[], loading, error: Boolean(error) };
 };
 
-export const useNodeSubtree = (nodeId: string|undefined) => {
-  const {loading, error, data} = useQuery(nodeSubtreeQuery, {
-    variables: {input: nodeId}
+export const useNodeSubtree = (nodeId: string | undefined) => {
+  const { loading, error, data } = useQuery(nodeSubtreeQuery, {
+    variables: { input: nodeId },
   });
-  return {nodes: data?.nodeSubtree, loading, error: Boolean(error)}
-}
+  return { nodes: data?.nodeSubtree, loading, error: Boolean(error) };
+};
 
+export const useBulkWrite = () => {
+  const [mutate, { loading }] = useMutation(bulkWriteMutation);
+  const app = useContext(AppContext);
+  const ownerId = app?.currentUser?.id;
+
+  const bulkWrite = async (input: NodeUpdateInput[]) => {
+    const result = await mutate({
+      variables: {
+        input,
+      },
+      optimisticResponse: {
+        bulkUpsertNodes: {
+          status: "complete",
+        },
+      },
+      update: (proxy) => {
+        const previousData: { nodes: any[] } | null = proxy.readQuery({
+          query: nodesQuery,
+          variables: {
+            query: {
+              ownerId: app?.currentUser?.id,
+            },
+          },
+        });
+        const insertIds = input.map((node) => node._id);
+        //start here -- update
+        const newData = [...previousData!.nodes];
+
+        console.log(newData);
+        console.log(input); 
+        
+        const filteredData = newData.filter((node)=>{return !insertIds.includes(node._id)})
+
+
+        const allData = [...filteredData, ...input]
+   
+
+        proxy.writeQuery({
+          query: nodesQuery,
+          variables: {
+            query: {
+              ownerId: ownerId,
+            },
+          },
+          data: {
+            nodes: allData,
+          },
+        });
+      },
+    });
+    return result;
+  };
+  return { bulkWrite, loading };
+};
 
 export const useInsertNode = () => {
   const [mutate, { loading }] = useMutation(insertNodeMutation);
+  const app = useContext(AppContext);
+  const ownerId = app?.currentUser?.id;
 
   const insertNode = async (data: NodeInsertInput) => {
     const result = await mutate({
       variables: {
         data,
       },
-      // optimisticResponse: {
-      //   insertOneNode: {
-      //     _id: "temp",
-      //     __typename: "Node",
-      //     order: data.order,
-      //     parentId: data.parentId,
-      //     text: data.text,
-      //     ownerId: data.ownerId,
-      //   },
-      // },
+      optimisticResponse: {
+        insertOneNode: {
+          _id: "temp",
+          __typename: "Node",
+          order: data.order,
+          parentId: data.parentId,
+          text: data.text,
+          ownerId: ownerId,
+          status: "todo",
+        },
+      },
       update: (proxy, response) => {
         const previousData: { nodes: any[] } | null = proxy.readQuery({
           query: nodesQuery,
           variables: {
             query: {
-              ownerId: data.ownerId
-            }
-          }
+              ownerId: data.ownerId,
+            },
+          },
         });
         const newData = [...previousData!.nodes, response.data.insertOneNode];
         proxy.writeQuery({
           query: nodesQuery,
           variables: {
             query: {
-              ownerId: data.ownerId
-            }
+              ownerId: ownerId,
+            },
           },
           data: {
             nodes: newData,
@@ -71,7 +132,7 @@ export const useInsertNode = () => {
         });
       },
     });
-    return result.data.insertOneNode; 
+    return result.data.insertOneNode;
   };
 
   return { insertNode, loading };
@@ -106,7 +167,7 @@ export const useUpdateNode = () => {
   return { updateNode, loading };
 };
 
-export const useDeleteNode = (ownerId: string|undefined) => {
+export const useDeleteNode = (ownerId: string | undefined) => {
   const [mutate, { loading }] = useMutation(deleteNodeAndChildrenMutation);
 
   const deleteNode = async (query: NodeQueryInput) => {
@@ -122,9 +183,9 @@ export const useDeleteNode = (ownerId: string|undefined) => {
           query: nodesQuery,
           variables: {
             query: {
-              ownerId: ownerId
-            }
-          }
+              ownerId: ownerId,
+            },
+          },
         });
         // const newData = previousData?.nodes.filter(
         //   (node) => node._id !== response.data.deleteOneNode._id
@@ -133,12 +194,12 @@ export const useDeleteNode = (ownerId: string|undefined) => {
           query: nodesQuery,
           variables: {
             query: {
-              ownerId: ownerId
-            }
+              ownerId: ownerId,
+            },
           },
           data: {
-            nodes: previousData!.nodes.filter((node)=>{
-              return node._id !== query._id && node.parentId !== query._id
+            nodes: previousData!.nodes.filter((node) => {
+              return node._id !== query._id && node.parentId !== query._id;
             }),
           },
         });
@@ -148,4 +209,24 @@ export const useDeleteNode = (ownerId: string|undefined) => {
     return result;
   };
   return { deleteNode, loading };
+};
+
+export const useResetOrdersMutation = () => {
+  const [mutate, { loading }] = useMutation(resetOrdersMutation);
+
+  const resetOrders = async (nodeId: string) => {
+    const id = new BSON.ObjectID(nodeId);
+    const result = await mutate({
+      variables: {
+        input: id,
+      },
+      optimisticResponse: {
+        resetOrders: 1,
+      },
+    });
+
+    return result.data.resetOrders;
+  };
+
+  return { resetOrders, loading };
 };
