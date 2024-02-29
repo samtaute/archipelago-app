@@ -5,26 +5,29 @@ import { AppContext } from "../contexts/realm-context";
 import TreeNode from "./TreeNode";
 import { findSlot } from "../util/findSlot";
 import { TreeNodeData } from "../util/buildTree";
-import { Node } from "../gql/graphql";
-import { siblingsAtPath } from "../util/pathFunctions";
-import { createSlotConfig} from "../util/createSlotConfig";
+import { createSlotConfig } from "../util/createSlotConfig";
 import { FlatNode } from "../util/flattenTree";
 import { useNavigate } from "react-router-dom";
 import { useInsertAt } from "./hooks/useInsertAt";
+import { useMoveToSlot } from "./hooks/useMoveTo";
+import { findNode } from "../util/findNode";
+import { useIndent } from "./hooks/useIndent";
+import { useOutdent } from "./hooks/useOutdent";
 
-const NodeTree = ({
-  nodeTree,
-  flatTree,
-}: {
+type NodeTreeProps = {
   nodeTree: TreeNodeData[];
   flatTree: FlatNode[];
-}) => {
+};
 
+const NodeTree = ({ nodeTree, flatTree }: NodeTreeProps) => {
   const app = useContext(AppContext);
   const navigate = useNavigate();
 
   //CRUD hooks
-  const {insertAt} = useInsertAt(); 
+  const { insertAt } = useInsertAt();
+  const { moveToSlot } = useMoveToSlot();
+  const { indent } = useIndent(flatTree);
+  const { outDent } = useOutdent(flatTree, nodeTree);
 
   const { updateNode } = useUpdateNode();
   const { deleteNode } = useDeleteNode(app?.currentUser?.id);
@@ -33,9 +36,12 @@ const NodeTree = ({
   const [draggingNode, setDraggingNode] = useState("");
   const [slotPath, setSlotPath] = useState<number[]>([]);
   const [focusId, setFocusId] = useState("");
-
-
-
+  function resetTree() {
+    //Used in handlers to reset UI state
+    setDraggingNode("");
+    setSlotPath([]);
+    setFocusId("");
+  }
 
   let slotConfig: { slotId: string; pos: string } | undefined;
   if (slotPath.length > 0) {
@@ -67,10 +73,7 @@ const NodeTree = ({
     </div>
   );
 
-  //drag handlers
-  // function handleDragStart(event: DragStartEvent) {
-  //   console.log(event)
-  // }
+  //DRAG HANDLERS
   function handleDragStart() {
     //do nothing for now
   }
@@ -83,117 +86,42 @@ const NodeTree = ({
       setSlotPath(targetedSlot);
     }
   }
-
-  //handleDragEnd updates the node being dragged based on the current slot path.
   async function handleDragEnd(event: DragEndEvent) {
-    //expand node if active and over id are the same, i.e. the user clicks on a node without dragging.
-    if (event.active.id === event.over?.id && draggingNode === "") {
-      navigate("/" + event.active.id.toString());
-    }
-    if (
-      slotPath
-        .toString()
-        .slice(0, event.active.data.current!.path.toString().length)
-        .includes(event.active.data.current!.path.toString())
-    ) {
-      console.log("circular");
-      //todo: wrrap this in a function. it repeats below.
-      setDraggingNode("");
-      setSlotPath([]);
-      return;
-    }
-    const draggedNode = findNode(event.active!.data!.current!.path);
-    const draggedNodeId = draggedNode._id;
-    if (slotPath.length === 0) {
-      return;
+    handleNoDrag(event); //Expands node if user has clicked without dragging.
+
+    if (slotIsValid()) {
+      const targetNode = findNode(event.active!.data!.current!.path, nodeTree);
+
+      moveToSlot(slotPath, targetNode, nodeTree);
     }
 
-    let draggedNodeParentId;
-    if (slotPath.length === 1) {
-      draggedNodeParentId = null;
-    } else {
-      draggedNodeParentId = findNode(
-        slotPath.slice(0, slotPath.length - 1)
-      )._id;
-    }
-
-    const lastSlotIdx = slotPath[slotPath.length - 1];
-    const siblingsOrders = siblingsAtPath(slotPath)
-      .map((sib) => {
-        return sib.order;
-      })
-      .sort();
-
-    let updatedOrder;
-    if (siblingsOrders.length === 0) {
-      updatedOrder = 100;
-    } else if (lastSlotIdx === 0) {
-      updatedOrder = siblingsOrders[0] / 2;
-    } else if (lastSlotIdx === siblingsOrders.length) {
-      updatedOrder = siblingsOrders[siblingsOrders.length - 1] * 2;
-    } else {
-      updatedOrder =
-        siblingsOrders[lastSlotIdx - 1] +
-        (siblingsOrders[lastSlotIdx] - siblingsOrders[lastSlotIdx - 1]) / 2;
-    }
-
-    updatedOrder = Math.floor(updatedOrder);
-
-    function siblingsAtPath(slotPath: number[]) {
-      let sibs = nodeTree;
-      for (let i = 0; i < slotPath.length - 1; i++) {
-        sibs = sibs[slotPath[i]].children;
+    resetTree();
+    function handleNoDrag(event: DragEndEvent) {
+      if (event.active.id === event.over?.id && draggingNode === "") {
+        navigate("/" + event.active.id.toString());
       }
-      return sibs;
-    }
-    await updateNode(
-      {
-        _id: draggedNodeId,
-      },
-      {
-        order: updatedOrder,
-        parentId: draggedNodeParentId,
-        text: draggedNode.text,
-        parentId_unset: !draggedNodeParentId ? true : false,
-        ownerId: app?.currentUser?.id,
-        status: draggedNode.status,
-      }
-    );
-
-    //Reset States
-    setDraggingNode("");
-    setSlotPath([]);
-
-    if (
-      siblingsOrders[lastSlotIdx] - siblingsOrders[lastSlotIdx - 1] <= 2 ||
-      updatedOrder <= 2
-    ) {
-      updateOrders(siblingsAtPath(slotPath));
     }
 
-    function findNode(path: number[]) {
-      let target = nodeTree[path[0]];
-      for (let i = 1; i < path.length; i++) {
-        target = target.children[path[i]];
+    function slotIsValid() {
+      if (
+        slotPath
+          .toString()
+          .slice(0, event.active.data.current!.path.toString().length)
+          .includes(event.active.data.current!.path.toString())
+      ) {
+        resetTree();
+        return false;
       }
-      return target;
-    }
-    async function updateOrders(siblings: TreeNodeData[]) {
-      for (let i = 0; i < siblings.length; i++) {
-        await updateNode(
-          {
-            _id: siblings[i]._id,
-          },
-          {
-            order: i * 100,
-            parentId: siblings[i].parentId,
-            text: siblings[i].text,
-            ownerId: app?.currentUser?.id,
-          }
-        );
+      if (slotPath.length === 0) {
+        return false;
       }
+
+      return true;
     }
   }
+  //
+
+  //KEYPRESS HANDLERS
   async function handleKeyDown(
     event: React.KeyboardEvent<HTMLDivElement>,
     nodeData: TreeNodeData
@@ -201,14 +129,13 @@ const NodeTree = ({
     if (event.key === "Enter") {
       event.preventDefault();
 
-      //Generate insertPath by incrementing the last index in node path by 1. 
-      const insertPath = [...nodeData.path]; 
-      insertPath[insertPath.length-1]++; 
-  
-      //get id of inserted node and set as focus
-      const {_id} = await insertAt(insertPath, nodeTree); 
-      setFocusId(_id)
+      //Generate insertPath
+      const insertPath = [...nodeData.path];
+      insertPath[insertPath.length - 1]++;
 
+      //get id of inserted node and set as focus
+      const { _id } = await insertAt(insertPath, nodeTree);
+      setFocusId(_id);
     } else if (event.key === "Backspace") {
       const selection = window.getSelection();
 
@@ -217,104 +144,55 @@ const NodeTree = ({
         nodeTree.length + nodeTree[0].children.length > 1
       ) {
         event.preventDefault();
-        await deleteNode({
+        deleteNode({
           _id: nodeData._id,
         });
       }
     } else if (event.key === "Tab" && event.shiftKey === false) {
       event.preventDefault();
-      const startingDepth = nodeData.path.length;
-      let pointerIdx = flatTree.findIndex((fNode) => fNode.id === nodeData._id);
 
-      while (pointerIdx > 0) {
-        pointerIdx--;
-        if (flatTree[pointerIdx].path.length === startingDepth) {
-          await updateNode(
-            {
-              _id: nodeData._id,
-            },
-            {
-              _id: nodeData._id,
-              parentId: flatTree[pointerIdx].id,
-              ownerId: app?.currentUser?.id,
-              status: nodeData.status,
-              order: 100,
-              text: event.currentTarget.innerHTML
-                ? event.currentTarget.innerHTML
-                : "",
-            }
-          );
-          return;
-        } else if (flatTree[pointerIdx].path.length === startingDepth + 1) {
-          const siblings = siblingsAtPath(flatTree[pointerIdx].path, nodeTree);
-          await updateNode(
-            {
-              _id: nodeData._id,
-            },
-            {
-              _id: nodeData._id,
-              text: nodeData.text ? nodeData.text : "",
-              ownerId: app?.currentUser?.id,
-              parentId: flatTree[pointerIdx].parentId,
-              order: await calculateOrder(
-                siblings,
-                flatTree[pointerIdx].path[
-                  flatTree[pointerIdx].path.length - 1 + 1
-                ]
-              ),
-            }
-          );
-        }
-      }
-      console.log("no suitable tab slots");
+      indent(nodeData);
     } else if (event.key === "Tab" && event.shiftKey === true) {
-      const startingDepth = nodeData.path.length;
-      let pointerIdx = flatTree.findIndex((fNode) => fNode.id === nodeData._id);
-
-      while (pointerIdx > 0) {
-        pointerIdx--;
-        if (flatTree[pointerIdx].path.length === startingDepth - 1) {
-          const siblings = siblingsAtPath(flatTree[pointerIdx].path, nodeTree);
-          await updateNode(
-            {
-              _id: nodeData._id,
-            },
-            {
-              _id: nodeData._id,
-              text: event.currentTarget.innerHTML
-                ? event.currentTarget.innerHTML
-                : "",
-              parentId: flatTree[pointerIdx].parentId,
-              ownerId: app?.currentUser?.id,
-              status: nodeData.status,
-              parentId_unset: !flatTree[pointerIdx].parentId ? true : false,
-              order: await calculateOrder(
-                siblings,
-                flatTree[pointerIdx].path[
-                  flatTree[pointerIdx].path.length - 1 + 1
-                ]
-              ),
-            }
-          );
-          return;
-        }
-      }
-      console.log("no suitable shift-tab");
+      outDent(nodeData);
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
-      const targetIdx = flatTree.findIndex((nd) => {
+
+      const visibleNodes = document.querySelectorAll("div.tree-node");
+
+      const nodeList: string[] = [];
+      visibleNodes.forEach((node) => nodeList.push(node.id));
+
+      let targetIdx = flatTree.findIndex((nd) => {
         return nd.id === nodeData._id;
       });
-      if (targetIdx > 0) {
-        setFocusId(flatTree[targetIdx - 1].id);
+      while (targetIdx > 0) {
+        targetIdx--;
+        const currNodeId = flatTree[targetIdx].id;
+        if (nodeList.includes(currNodeId)) {
+          setFocusId(currNodeId);
+          return;
+        }
       }
     } else if (event.key === "ArrowDown") {
       event.preventDefault();
-      const targetIdx = flatTree.findIndex((nd) => nd.id === nodeData._id);
-      if (targetIdx < flatTree.length - 1) {
-        setFocusId(flatTree[targetIdx + 1].id);
+
+      const visibleNodes = document.querySelectorAll("div.tree-node");
+
+      const nodeList: string[] = [];
+      visibleNodes.forEach((node) => nodeList.push(node.id));
+
+      let targetIdx = flatTree.findIndex((nd) => {
+        return nd.id === nodeData._id;
+      });
+      while (targetIdx < flatTree.length) {
+        targetIdx++;
+        const currNodeId = flatTree[targetIdx].id;
+        if (nodeList.includes(currNodeId)) {
+          setFocusId(currNodeId);
+          return;
+        }
       }
-    }
+    } 
   }
   async function handleBlur(
     event: React.FocusEvent<HTMLDivElement>,
@@ -336,53 +214,6 @@ const NodeTree = ({
         }
       );
     }
-  }
-  async function calculateOrder(
-    siblings: TreeNodeData[] | Node[],
-    index: number
-  ) {
-    if (siblings.length === 0) return 100;
-
-    //Map siblings to array or orders sorted in ascending order.
-    const siblingOrders = siblings
-      .map((sib) => {
-        return sib.order;
-      })
-      .sort();
-
-    //Execute logic for determining order. Reset orders of all sibling nodes if order diffs become too small.
-    let order;
-    let diff;
-    if (index === 0) {
-      order = Math.floor(siblingOrders[0] / 2);
-      diff = siblingOrders[0];
-    } else if (index >= siblingOrders.length) {
-      order = Math.floor(siblingOrders[siblingOrders.length - 1] + 100);
-    } else {
-      diff = siblingOrders[index] - siblingOrders[index - 1];
-      order = Math.floor(siblingOrders[index - 1] + diff / 2);
-    }
-
-    //Todo: This is a costly operation as it requires several database queries. Consider moving it somwhere else.
-    if (diff && diff < 3) {
-      for (let i = 0; i < siblings.length; i++) {
-        await updateNode(
-          {
-            _id: siblings[i]._id,
-          },
-          {
-            _id: siblings[i]._id,
-            order: i * 100,
-            parentId: siblings[i].parentId,
-            text: siblings[i].text,
-            ownerId: app?.currentUser?.id,
-            status: siblings[i].status,
-          }
-        );
-      }
-    }
-
-    return order;
   }
 };
 

@@ -60,7 +60,7 @@ function findSiblings(path: number[], tree: TreeNodeData[]) {
   return path.length <= 1 ? tree : findNode(path.slice(0, -1), tree).children;
 }
 
-function computeOrder(rawSiblings: TreeNodeData[], index: number) {
+export function computeOrder(rawSiblings: TreeNodeData[], index: number) {
   const siblings = rawSiblings.map((node) => node.order);
 
   let order;

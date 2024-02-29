@@ -96,9 +96,4 @@ export const deleteNodeAndChildrenMutation = gql`
     }
 `
 
-export const  resetOrdersMutation = gql`
-    mutation ResetOrders($input: ObjectId){
-        resetOrders(input: $input)
-    }
-`
 

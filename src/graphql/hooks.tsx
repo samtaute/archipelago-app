@@ -5,7 +5,6 @@ import {
   insertNodeMutation,
   nodeSubtreeQuery,
   nodesQuery,
-  resetOrdersMutation,
   updateNodeMutation,
 } from "./queries";
 import {
@@ -14,7 +13,6 @@ import {
   NodeQueryInput,
   NodeUpdateInput,
 } from "../gql/graphql";
-import { BSON } from "realm-web";
 import { useContext } from "react";
 import { AppContext } from "../contexts/realm-context";
 
@@ -211,22 +209,3 @@ export const useDeleteNode = (ownerId: string | undefined) => {
   return { deleteNode, loading };
 };
 
-export const useResetOrdersMutation = () => {
-  const [mutate, { loading }] = useMutation(resetOrdersMutation);
-
-  const resetOrders = async (nodeId: string) => {
-    const id = new BSON.ObjectID(nodeId);
-    const result = await mutate({
-      variables: {
-        input: id,
-      },
-      optimisticResponse: {
-        resetOrders: 1,
-      },
-    });
-
-    return result.data.resetOrders;
-  };
-
-  return { resetOrders, loading };
-};
