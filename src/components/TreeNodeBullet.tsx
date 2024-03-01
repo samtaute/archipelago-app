@@ -19,16 +19,7 @@ const TreeNodeBullet = ({ nodeData }: { nodeData: TreeNodeData }) => {
       }
     : undefined;
 
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>)=>{
-    event.preventDefault();
-    console.log('test')
-    if(event.shiftKey === true){
-      console.log('complete')
-    }
-  }
-
   return (
-    <div onClick={handleClick}>
       <a
         ref={setNodeRef}
         style={style}
@@ -48,7 +39,6 @@ const TreeNodeBullet = ({ nodeData }: { nodeData: TreeNodeData }) => {
           />
         </svg>
       </a>
-    </div>
   );
 };
 

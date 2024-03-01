@@ -156,12 +156,15 @@ const NodeTree = ({ nodeTree, flatTree }: NodeTreeProps) => {
       event.preventDefault();
       const temp = {...nodeData, text: event.currentTarget.innerHTML}
       indent(temp);
+      setFocusId(temp._id)
     } else if (event.key === "Tab" && event.shiftKey === true) {
+      event.preventDefault(); 
       const temp = {...nodeData, text: event.currentTarget.innerHTML}
       outDent(temp);
+      setFocusId(temp._id)
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
-      focusUp(nodeData)
+      focusUp(nodeData);
     } else if (event.key === "ArrowDown") {
       event.preventDefault();
       focusDown(nodeData); 
