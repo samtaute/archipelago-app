@@ -4,6 +4,8 @@ export interface FlatNode {
   id: string;
   path: number[];
   parentId: string | null;
+  order: number
+  children: string[]
 }
 
 export function flattenTree(rootNodes: TreeNodeData[]) {
@@ -17,6 +19,8 @@ export function flattenTree(rootNodes: TreeNodeData[]) {
       id: node._id,
       path: node.path,
       parentId: node.parentId,
+      order: node.order,
+      children: node.children.map((child)=>child._id)
     });
     for (const child of node.children) {
       flattened.push(...flattenTree([child]));

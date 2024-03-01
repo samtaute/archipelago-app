@@ -53,6 +53,15 @@ export const nodeByIdQuery = gql`
     }
 `
 
+export const bulkWriteMutation = gql`
+    mutation BulkWrite($input: [NodeUpdateInput]){
+        bulkUpsertNodes(input: $input){
+            status
+        }
+
+    }
+`
+
 export const updateNodeMutation = gql`
     mutation UpdateOneNode($query: NodeQueryInput, $set: NodeUpdateInput!){
         updateOneNode(query: $query, set: $set){
@@ -86,3 +95,5 @@ export const deleteNodeAndChildrenMutation = gql`
         deleteNodeAndChildren(input: $input)
     }
 `
+
+

@@ -8,6 +8,7 @@ export interface TreeNodeData {
   children: TreeNodeData[];
   path: number[];
   status: string; 
+  ownerId: string; 
 }
 
 export function buildTree(rawNodes: Node[]) {
@@ -26,6 +27,7 @@ export function buildTree(rawNodes: Node[]) {
       children: [] as TreeNodeData[],
       order: record.order ? (record.order as number) : 100,
       status: record.status ? record.status : '', 
+      ownerId: record.ownerId
     };
 
     nodeMap.set(record["_id"].toString(), newNode);

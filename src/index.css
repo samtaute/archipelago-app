@@ -127,6 +127,10 @@ body{
   color: transparent; 
 }
 
+.collapsed{
+  background-color: rgb(99, 98, 98);
+}
+
 
 .expand.open{
   transform: rotateZ(90deg); 

@@ -101,7 +101,7 @@ const TreeNode = ({
 
 
   return (
-    <div className="tree-node" style={style}>
+    <div className="tree-node" style={style} id={nodeData._id}>
       {slotActive && slotMarker}
       <div className="node-header" ref={setNodeRef}>
         <div onClick={handleNodeExpandedToggle} className={`expand ${!isCollapsed ? "open" : ""}`}>
@@ -114,6 +114,8 @@ const TreeNode = ({
           handleKeyDown={handleKeyDown}
           focusId={focusId}
         />
+        {nodeData.order}----
+        {nodeData._id}
           <Checkbox nodeData={nodeData}/>
       </div>
       <div className="node-children">
