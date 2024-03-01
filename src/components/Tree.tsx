@@ -165,7 +165,6 @@ const NodeTree = ({ nodeTree, flatTree }: NodeTreeProps) => {
     } else if (event.key === "ArrowDown") {
       event.preventDefault();
       focusDown(nodeData); 
-     
     } 
   }
   async function handleBlur(

@@ -57,12 +57,12 @@ export const useBulkWrite = () => {
         });
         const insertIds = input.map((node) => node._id);
         const newData = [...previousData!.nodes];
-        
-        const filteredData = newData.filter((node)=>{return !insertIds.includes(node._id)})
 
+        const filteredData = newData.filter((node) => {
+          return !insertIds.includes(node._id);
+        });
 
-        const allData = [...filteredData, ...input]
-   
+        const allData = [...filteredData, ...input];
 
         proxy.writeQuery({
           query: nodesQuery,
@@ -204,4 +204,3 @@ export const useDeleteNode = (ownerId: string | undefined) => {
   };
   return { deleteNode, loading };
 };
-

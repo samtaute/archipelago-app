@@ -26,7 +26,8 @@ export const useMoveToSlot = () => {
     }else{
         updateNode({_id: targetNode._id}, {
             text: targetNode.text, 
-            parentId: parent._id ? parent._id : null,
+            parentId: parent ? parent._id : null,
+            parentId_unset: parent? false : true,
             order: order, 
             status: targetNode.status, 
             ownerId: app?.currentUser?.id
