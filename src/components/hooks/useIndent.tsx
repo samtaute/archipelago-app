@@ -8,7 +8,6 @@ import { extractNodeData } from "../../util/extractNodeData";
 
 export const useIndent = (flatTree: FlatNode[])=>{
     const {updateNode} = useUpdateNode(); 
-    console.log("UseIndent processed")
     const indent = async(nodeToIndent: TreeNodeData)=>{
         const {_id, path} = nodeToIndent
         const nodeEntity = extractNodeData(nodeToIndent)

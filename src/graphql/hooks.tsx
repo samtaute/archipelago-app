@@ -56,11 +56,7 @@ export const useBulkWrite = () => {
           },
         });
         const insertIds = input.map((node) => node._id);
-        //start here -- update
         const newData = [...previousData!.nodes];
-
-        console.log(newData);
-        console.log(input); 
         
         const filteredData = newData.filter((node)=>{return !insertIds.includes(node._id)})
 
@@ -98,7 +94,7 @@ export const useInsertNode = () => {
       },
       optimisticResponse: {
         insertOneNode: {
-          _id: "temp",
+          _id: data._id,
           __typename: "Node",
           order: data.order,
           parentId: data.parentId,

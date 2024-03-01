@@ -13,6 +13,7 @@ import { useMoveToSlot } from "./hooks/useMoveTo";
 import { findNode } from "../util/findNode";
 import { useIndent } from "./hooks/useIndent";
 import { useOutdent } from "./hooks/useOutdent";
+import { useFocus } from "./hooks/useFocus";
 
 type NodeTreeProps = {
   nodeTree: TreeNodeData[];
@@ -35,7 +36,9 @@ const NodeTree = ({ nodeTree, flatTree }: NodeTreeProps) => {
   //UI state
   const [draggingNode, setDraggingNode] = useState("");
   const [slotPath, setSlotPath] = useState<number[]>([]);
-  const [focusId, setFocusId] = useState("");
+
+  const {focusId, setFocusId, focusDown, focusUp} = useFocus(flatTree)
+
   function resetTree() {
     //Used in handlers to reset UI state
     setDraggingNode("");
@@ -147,51 +150,22 @@ const NodeTree = ({ nodeTree, flatTree }: NodeTreeProps) => {
         deleteNode({
           _id: nodeData._id,
         });
+
       }
     } else if (event.key === "Tab" && event.shiftKey === false) {
       event.preventDefault();
-
-      indent(nodeData);
+      const temp = {...nodeData, text: event.currentTarget.innerHTML}
+      indent(temp);
     } else if (event.key === "Tab" && event.shiftKey === true) {
-      outDent(nodeData);
+      const temp = {...nodeData, text: event.currentTarget.innerHTML}
+      outDent(temp);
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
-
-      const visibleNodes = document.querySelectorAll("div.tree-node");
-
-      const nodeList: string[] = [];
-      visibleNodes.forEach((node) => nodeList.push(node.id));
-
-      let targetIdx = flatTree.findIndex((nd) => {
-        return nd.id === nodeData._id;
-      });
-      while (targetIdx > 0) {
-        targetIdx--;
-        const currNodeId = flatTree[targetIdx].id;
-        if (nodeList.includes(currNodeId)) {
-          setFocusId(currNodeId);
-          return;
-        }
-      }
+      focusUp(nodeData)
     } else if (event.key === "ArrowDown") {
       event.preventDefault();
-
-      const visibleNodes = document.querySelectorAll("div.tree-node");
-
-      const nodeList: string[] = [];
-      visibleNodes.forEach((node) => nodeList.push(node.id));
-
-      let targetIdx = flatTree.findIndex((nd) => {
-        return nd.id === nodeData._id;
-      });
-      while (targetIdx < flatTree.length) {
-        targetIdx++;
-        const currNodeId = flatTree[targetIdx].id;
-        if (nodeList.includes(currNodeId)) {
-          setFocusId(currNodeId);
-          return;
-        }
-      }
+      focusDown(nodeData); 
+     
     } 
   }
   async function handleBlur(
