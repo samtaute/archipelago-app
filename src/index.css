@@ -60,7 +60,7 @@ body{
 /* NODE-HEADER */
 .node-header{
   position: relative; 
-  align-items: baseline; 
+  align-items: center; 
   display: flex; 
   margin-left: -500px;
   padding-left: 524px; 

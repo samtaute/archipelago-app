@@ -4,7 +4,6 @@ import TreeNodeText from "./TreeNodeText";
 import { UniqueIdentifier, useDroppable } from "@dnd-kit/core";
 import { TreeNodeData } from "../util/buildTree";
 import { useEffect, useState } from "react";
-import { Checkbox } from "./ui/Checkbox";
 
 const TreeNode = ({
   nodeData,
@@ -27,15 +26,13 @@ const TreeNode = ({
       path: nodeData.path,
     },
   });
-  
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  useEffect(()=>{
-    const collapsedList = localStorage.getItem("collapsedList");  
+  useEffect(() => {
+    const collapsedList = localStorage.getItem("collapsedList");
     setIsCollapsed(Boolean(collapsedList?.includes(nodeData._id)));
-  },[nodeData])
-
+  }, [nodeData]);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -52,8 +49,6 @@ const TreeNode = ({
       window.removeEventListener("storage", handleStorageChange);
     };
   }, [nodeData._id]);
-
-
 
   const dragging = draggingNode === nodeData._id.toString();
 
@@ -83,12 +78,18 @@ const TreeNode = ({
       ? localStorage.getItem("collapsedList")
       : "";
 
-    if(collapsedList!.includes(nodeData._id) && nodeData.children.length > 0){
-      localStorage.setItem("collapsedList", collapsedList!.replace(`${nodeData._id},`, "") )
-      window.dispatchEvent( new Event('storage') );
-    } else if (nodeData.children.length > 0){
-      localStorage.setItem("collapsedList", collapsedList!.concat(`${nodeData._id},`))
-      window.dispatchEvent( new Event('storage') );
+    if (collapsedList!.includes(nodeData._id) && nodeData.children.length > 0) {
+      localStorage.setItem(
+        "collapsedList",
+        collapsedList!.replace(`${nodeData._id},`, "")
+      );
+      window.dispatchEvent(new Event("storage"));
+    } else if (nodeData.children.length > 0) {
+      localStorage.setItem(
+        "collapsedList",
+        collapsedList!.concat(`${nodeData._id},`)
+      );
+      window.dispatchEvent(new Event("storage"));
     }
   };
 
@@ -98,25 +99,24 @@ const TreeNode = ({
       }
     : {};
 
-
-
   return (
     <div className="tree-node" style={style} id={nodeData._id}>
       {slotActive && slotMarker}
-      <div className="node-header" ref={setNodeRef}>
-        <div onClick={handleNodeExpandedToggle} className={`expand ${!isCollapsed ? "open" : ""}`}>
+      <div className="node-header group" ref={setNodeRef}>
+        <div
+          onClick={handleNodeExpandedToggle}
+          className={`expand ${!isCollapsed ? "open" : ""}`}
+        >
           <ExpandArrow />
         </div>
         <TreeNodeBullet nodeData={nodeData} />
         <TreeNodeText
+          draggingNode={draggingNode.toString()}
           nodeData={nodeData}
           handleBlur={handleBlur}
           handleKeyDown={handleKeyDown}
           focusId={focusId}
         />
-        {nodeData.order}----
-        {nodeData._id}
-          <Checkbox nodeData={nodeData}/>
       </div>
       <div className="node-children">
         {!isCollapsed &&
@@ -139,5 +139,3 @@ const TreeNode = ({
 };
 
 export default TreeNode;
-
-
