@@ -24,7 +24,6 @@ export const CheckBubble = ({
           strokeLinejoin="round"
         />
       </svg>
-      {draggingNode}
     </div>
   );
 };
