@@ -64,6 +64,7 @@ body{
   display: flex; 
   margin-left: -500px;
   padding-left: 524px; 
+  margin-top: 4px; 
   background: rgba(76, 175, 80, 0.0);
 }
 
@@ -83,7 +84,7 @@ body{
   width: 18px;
   height: 18px;
   display: block;
-  top: 7px;
+  top: 2px;
 }
 
 .node-header-bullet:hover{
@@ -99,7 +100,7 @@ body{
 /* NODE-HEADER-TEXT */
 
 .node-header-text{
-  padding-top: 4px; 
+  /* padding-top: 4px;  */
   line-height: 24px; 
   flex: 1 1 auto; 
   padding-right: 10px; 
@@ -122,7 +123,6 @@ body{
 /* EXPAND */
 .expand{
   position: absolute;
-  top: 6px;
   left: 475px; 
   color: transparent; 
 }

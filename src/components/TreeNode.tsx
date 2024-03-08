@@ -4,6 +4,7 @@ import TreeNodeText from "./TreeNodeText";
 import { UniqueIdentifier, useDroppable } from "@dnd-kit/core";
 import { TreeNodeData } from "../util/buildTree";
 import { useEffect, useState } from "react";
+import { CheckBubble } from "./ui/Checkbubble";
 
 const TreeNode = ({
   nodeData,
@@ -102,7 +103,7 @@ const TreeNode = ({
   return (
     <div className="tree-node" style={style} id={nodeData._id}>
       {slotActive && slotMarker}
-      <div className="node-header group" ref={setNodeRef}>
+      <div className="node-header" ref={setNodeRef}>
         <div
           onClick={handleNodeExpandedToggle}
           className={`expand ${!isCollapsed ? "open" : ""}`}
@@ -110,13 +111,19 @@ const TreeNode = ({
           <ExpandArrow />
         </div>
         <TreeNodeBullet nodeData={nodeData} />
-        <TreeNodeText
-          draggingNode={draggingNode.toString()}
-          nodeData={nodeData}
-          handleBlur={handleBlur}
-          handleKeyDown={handleKeyDown}
-          focusId={focusId}
-        />
+        <div className="flex align-middle group">
+          <TreeNodeText
+            draggingNode={draggingNode.toString()}
+            nodeData={nodeData}
+            handleBlur={handleBlur}
+            handleKeyDown={handleKeyDown}
+            focusId={focusId}
+          />
+          <CheckBubble
+            nodeData={nodeData}
+            draggingNode={draggingNode.toString()}
+          />
+        </div>
       </div>
       <div className="node-children">
         {!isCollapsed &&

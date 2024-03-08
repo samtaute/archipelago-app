@@ -1,14 +1,11 @@
 import { useEffect, useRef } from "react";
 import { TreeNodeData } from "../util/buildTree";
-import { CheckBubble } from "./ui/Checkbubble";
-import { useUpdateNode } from "../graphql/hooks";
 
 const TreeNodeText = ({
   nodeData,
   handleBlur,
   handleKeyDown,
   focusId,
-  draggingNode,
 }: {
   nodeData: TreeNodeData;
   handleBlur: (
@@ -23,8 +20,6 @@ const TreeNodeText = ({
   draggingNode: string | null;
 }) => {
   const thisComponent = useRef<HTMLDivElement>(null);
-
-  const { updateNode } = useUpdateNode();
 
   const keyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
     handleKeyDown(event, nodeData);
@@ -56,55 +51,27 @@ const TreeNodeText = ({
 
   const { status } = nodeData;
 
-  const checkHandler = async () => {
-    await updateNode(
-      {
-        _id: nodeData._id,
-      },
-      {
-        _id: nodeData._id,
-        text: nodeData.text,
-        parentId: nodeData.parentId,
-        ownerId: nodeData.ownerId,
-        status: status === "todo" ? "done" : "todo",
-        order: nodeData.order,
-      }
-    );
-  };
+  const textComponent = (
+    <div
+      className="node-header-text"
+      contentEditable
+      suppressContentEditableWarning
+      dangerouslySetInnerHTML={{
+        __html: nodeData.text ? nodeData.text : "",
+      }}
+      onBlur={blurHandler}
+      onKeyDown={keyDownHandler}
+      ref={thisComponent}
+    ></div>
+  );
 
   if (status === "done") {
     return (
-      <>
-        <CheckBubble draggingNode={draggingNode} checkHandler={checkHandler} />
-        <s>
-          <div
-            className="node-header-text"
-            contentEditable
-            suppressContentEditableWarning
-            dangerouslySetInnerHTML={{
-              __html: nodeData.text ? nodeData.text : "",
-            }}
-            onBlur={blurHandler}
-            onKeyDown={keyDownHandler}
-            ref={thisComponent}
-          ></div>
-        </s>
-      </>
+        <s>{textComponent}</s>
     );
-  }
-
-  return (
+  } else return (
     <>
-      <CheckBubble checkHandler={checkHandler} draggingNode={draggingNode} />
-      <div
-        className="node-header-text"
-        contentEditable
-        suppressContentEditableWarning
-        dangerouslySetInnerHTML={{ __html: nodeData.text ? nodeData.text : "" }}
-        onBlur={blurHandler}
-        onKeyDown={keyDownHandler}
-        ref={thisComponent}
-      ></div>
+     {textComponent}
     </>
   );
 };
