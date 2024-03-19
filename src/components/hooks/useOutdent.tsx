@@ -27,11 +27,12 @@ export const useOutdent = (flatTree: FlatNode[], nodeTree: TreeNodeData[])=>{
                 },{
                     ...nodeEntity,
                     parentId: currNode.parentId,
+                    parentId_unset: currNode.parentId ? false : true, 
                     order: computeOrder(siblings, insertIndex).order
                 })  
                 return result; 
             }
-            console.log('no indent')
+            console.log('no outdent')
         }
     }
 

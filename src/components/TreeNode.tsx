@@ -4,7 +4,6 @@ import TreeNodeText from "./TreeNodeText";
 import { UniqueIdentifier, useDroppable } from "@dnd-kit/core";
 import { TreeNodeData } from "../util/buildTree";
 import { useEffect, useState } from "react";
-import { Checkbox } from "./ui/Checkbox";
 
 const TreeNode = ({
   nodeData,
@@ -114,9 +113,6 @@ const TreeNode = ({
           handleKeyDown={handleKeyDown}
           focusId={focusId}
         />
-        {nodeData.order}----
-        {nodeData._id}
-          <Checkbox nodeData={nodeData}/>
       </div>
       <div className="node-children">
         {!isCollapsed &&
