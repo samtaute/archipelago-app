@@ -18,7 +18,7 @@ export const TreeEditor = () => {
 
   useEffect(() => {
     if (!app?.currentUser) {
-      navigate("/login");
+      navigate("/auth/login");
     }
   }, [navigate, app]);
 
