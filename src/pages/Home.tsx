@@ -10,7 +10,7 @@ export const Home = () => {
     if (app?.currentUser) {
       navigate("/app");
     } else {
-      navigate("/auth/signup");
+      navigate("/auth/login");
     }
   }, [app, navigate]);
   return <div>Homepage</div>;

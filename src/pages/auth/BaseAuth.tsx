@@ -1,15 +1,15 @@
-import Card from "./Card";
+import Card from "../../components/ui/Card";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useContext } from "react";
 import { AppContext } from "../../contexts/realm-context";
 import { Credentials } from "realm-web";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { Link } from "../../components/ui/Link";
 
 export const Signup = () => {
   return (
     <BaseAuth
-      description="Create a free account"
       googleText="signup_with"
       buttonText="Sign Up"
       linkText="Sign In"
@@ -21,22 +21,19 @@ export const Signup = () => {
 export const Login = () => {
   return (
     <BaseAuth
-      description="Log in with Google"
       googleText="continue_with"
       buttonText="Sign In"
-      linkText="Sign In"
+      linkText="Sign Up"
       isExistingUser={true}
     />
   );
 };
 const BaseAuth = ({
-  description,
   googleText,
   buttonText,
   linkText,
   isExistingUser,
 }: {
-  description: string;
   googleText:
     | "signup_with"
     | "signin_with"
@@ -86,7 +83,6 @@ const BaseAuth = ({
   return (
     <Card>
       <h1 className="font-bold block text-xl m-3">Welcome to Archipelago</h1>
-      <p>{description}</p>
       <GoogleLogin
         onSuccess={handleSuccess}
         onError={handleError}
@@ -121,7 +117,7 @@ const BaseAuth = ({
           ></input>
         )}
       </div>
-      {error ? <div>Check your credentials and try again.</div> : ''}
+      {error ? <div>Check your credentials and try again.</div> : ""}
       <button
         onClick={handleSignup}
         type="button"
@@ -130,12 +126,11 @@ const BaseAuth = ({
         {buttonText}
       </button>
 
-      <a
-        className="absolute left-2 bottom-2 text-sm underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
-        href="www.google.com"
-      >
-        {linkText}
-      </a>
+      <div className="text-sm">
+        {isExistingUser ? "No account yet?": "Already a user?"} <Link to={isExistingUser ? "/auth/signup" : "/auth/login"}>
+          {linkText}
+        </Link>
+      </div>
     </Card>
   );
 };
