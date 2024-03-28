@@ -1,6 +1,6 @@
 import { useContext, useEffect} from "react";
 import {useNavigate} from "react-router-dom"
-import { AppContext } from "../contexts/realm-context";
+import { AppContext } from "../../contexts/realm-context";
 
 
 
@@ -28,7 +28,7 @@ const ConfirmationPage = ()=>{
     }, [app])
 
     const handleNavigateToLogin = ()=>{
-        navigate("/login"); 
+        navigate("/auth/login"); 
     }
 
     return (
