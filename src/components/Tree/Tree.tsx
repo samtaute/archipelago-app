@@ -1,19 +1,19 @@
-import { useDeleteNode, useUpdateNode } from "../graphql/hooks";
+import { useDeleteNode, useUpdateNode } from "../../graphql/hooks";
 import { useContext, useState } from "react";
 import { DndContext, DragEndEvent, DragMoveEvent } from "@dnd-kit/core";
-import { AppContext } from "../contexts/realm-context";
+import { AppContext } from "../../contexts/realm-context";
 import TreeNode from "./TreeNode";
-import { findSlot } from "../util/findSlot";
-import { TreeNodeData } from "../util/buildTree";
-import { createSlotConfig } from "../util/createSlotConfig";
-import { FlatNode } from "../util/flattenTree";
+import { findSlot } from "../../util/findSlot";
+import { TreeNodeData } from "../../util/buildTree";
+import { createSlotConfig } from "../../util/createSlotConfig";
+import { FlatNode } from "../../util/flattenTree";
 import { useNavigate } from "react-router-dom";
-import { useInsertAt } from "./hooks/useInsertAt";
-import { useMoveToSlot } from "./hooks/useMoveTo";
-import { findNode } from "../util/findNode";
-import { useIndent } from "./hooks/useIndent";
-import { useOutdent } from "./hooks/useOutdent";
-import { useFocus } from "./hooks/useFocus";
+import { useInsertAt } from "../hooks/useInsertAt";
+import { useMoveToSlot } from "../hooks/useMoveTo";
+import { findNode } from "../../util/findNode";
+import { useIndent } from "../hooks/useIndent";
+import { useOutdent } from "../hooks/useOutdent";
+import { useFocus } from "../hooks/useFocus";
 
 type NodeTreeProps = {
   nodeTree: TreeNodeData[];
