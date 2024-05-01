@@ -11,10 +11,13 @@ export const useFocus = (flatTree: FlatNode[]) => {
     let targetIdx = flatTree.findIndex((nd) => {
       return nd.id === nodeData._id;
     });
+    console.log(targetIdx)
+    
     while (targetIdx > 0) {
       targetIdx--;
       const currNodeId = flatTree[targetIdx].id;
       if (nodeList.includes(currNodeId)) {
+        console.log("found")
         setFocusId(currNodeId);
         return;
       }
