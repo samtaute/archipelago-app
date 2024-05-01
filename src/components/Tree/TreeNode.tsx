@@ -74,7 +74,7 @@ const TreeNode = ({
     : {};
 
   return (
-    <div className="relative block" style={style} id={nodeData._id}>
+    <div className="relative block tree-node" style={style} id={nodeData._id}>
       <TreeNodeHeader nodeData={nodeData} handleBlur={handleBlur} handleKeyDown={handleKeyDown} focusId={focusId} />
       <TreeNodeChildren nodeData={nodeData} isCollapsed={isCollapsed}>
           {nodeData.children.map((node)=>{
