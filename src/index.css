@@ -22,18 +22,17 @@ body{
   flex-direction: column; 
   margin-top: 4rem; 
   position: relative; 
-  overflow: hidden;
   padding: 2rem;
 }
 
 /*.tree-node */
 
-.tree-node{
+/* .tree-node{
   position: relative; 
   background: rgba(76, 175, 80, 0.0);
-}
+} */
 
-.tree-node:before{
+/* .tree-node:before{
   content: '';
   background: #ccc;
   position: absolute;
@@ -41,19 +40,21 @@ body{
   bottom: 5px;
   left: 9px; 
   width: 1px; 
-}
+} */
 
 /* NODE-CHILDREN */
 .node-children{
-  padding-left: 32px; 
-  margin-left: 8px; 
+  padding-left: 36px; 
+  margin-left: 3px; 
+  position: relative; 
 }
 
-.node-childen:after{
-  content: '';
+.node-children:after{
+  content: "";
   background: #ccc;
   position: absolute;
-  top: 5px; 
+  top: 4px; 
+  left: 0; 
   height: 80%;
   width: 1px; 
 }
@@ -75,15 +76,12 @@ body{
 
 /* NODE-HEADER-BULLET */
 .node-header-bullet{
-  position: absolute;
-  left: 500px;   
   /* background-color: rgb(220, 217, 217); */
   border-radius: 9px;
   cursor: pointer; 
-  width: 18px;
-  height: 18px;
-  display: block;
-  top: 7px;
+  width: 16px;
+  height: 16px;
+
 }
 
 .node-header-bullet:hover{
@@ -99,7 +97,6 @@ body{
 /* NODE-HEADER-TEXT */
 
 .node-header-text{
-  padding-top: 4px; 
   line-height: 24px; 
   flex: 1 1 auto; 
   padding-right: 10px; 

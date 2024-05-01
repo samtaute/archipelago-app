@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../contexts/realm-context";
-import NodeTree from "../components/Tree";
+import NodeTree from "../components/Tree/Tree";
 import { useInsertNode, useNodeSubtree, useNodes } from "../graphql/hooks";
 import { TreeNodeData, buildTree } from "../util/buildTree";
 import { FlatNode, flattenTree } from "../util/flattenTree";

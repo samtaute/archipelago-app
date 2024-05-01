@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import { TreeNodeData } from "../util/buildTree";
+import { TreeNodeData } from "../../util/buildTree";
 
-const TreeNodeText = ({
+const TreeNodeHeaderText = ({
   nodeData,
   handleBlur,
   handleKeyDown,
@@ -81,4 +81,4 @@ const TreeNodeText = ({
   );
 };
 
-export default TreeNodeText;
+export default TreeNodeHeaderText;
