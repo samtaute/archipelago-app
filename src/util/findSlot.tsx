@@ -121,7 +121,7 @@ export function findSlot(
 
   function getDepth(active: Active) {
     //calculate screen position of the center of the active element.
-    const activeCenterX = active.rect.current.translated!.left + 9;
+    const activeCenterX = active.rect.current.translated!.left  -8; 
 
     const pageLeftEdge = document
       .getElementById("page")
