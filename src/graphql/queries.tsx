@@ -9,6 +9,7 @@ export const nodesQuery = gql`
             parentId
             ownerId
             status
+            completedDate
         }
     }
 `  
@@ -49,6 +50,7 @@ export const nodeByIdQuery = gql`
             parentId
             ownerId
             status
+            completedDate
         }
     }
 `

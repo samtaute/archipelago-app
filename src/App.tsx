@@ -11,9 +11,9 @@ import {
 import { useContext } from "react";
 import { AppContext } from "./contexts/realm-context";
 import { Login, Signup } from "./pages/auth/BaseAuth";
-import { TreeEditor } from "./pages/TreeEditor";
 import ConfirmationPage from "./pages/auth/Confirmation";
 import RootLayout from "./components/ui/RootLayout";
+import { MainContent } from "./pages/MainContent";
 // import RootLayout from "./components/ui/RootLayout";
 
 const router = createHashRouter([
@@ -44,7 +44,7 @@ const router = createHashRouter([
     element: <RootLayout/>,
     children: [
       {
-        index: true, element: <TreeEditor/>
+        index: true, element: <MainContent/>
       }
     ]
   },

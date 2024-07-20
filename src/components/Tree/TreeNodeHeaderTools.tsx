@@ -131,6 +131,7 @@ const CheckBubble = ({ nodeData }: { nodeData: TreeNodeData }) => {
       },
       {
         status: nodeData.status === "done" ? "todo" : "done",
+        completedDate: new Date(),
       }
     );
   };

@@ -1,13 +1,15 @@
-import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { PropsWithChildren, useContext } from "react";
+import { Log } from "../components/Log/Log";
 import { AppContext } from "../contexts/realm-context";
-import NodeTree from "../components/Tree/Tree";
-import { useInsertNode, useNodeSubtree, useNodes } from "../graphql/hooks";
+import { useNavigate } from "react-router-dom";
+import { useInsertNode, useNodes } from "../graphql/hooks";
+import { useEffect, useState } from "react";
 import { TreeNodeData, buildTree } from "../util/buildTree";
 import { FlatNode, flattenTree } from "../util/flattenTree";
-import { useParams } from "react-router-dom";
+import NodeTree from "../components/Tree/Tree";
+import { Node } from "../gql/graphql";
 
-export const TreeEditor = () => {
+export const MainContent = () => {
   const app = useContext(AppContext);
   const navigate = useNavigate();
 
@@ -15,6 +17,9 @@ export const TreeEditor = () => {
 
   const { nodes, loading, error } = useNodes(app?.currentUser?.id);
   const { insertNode } = useInsertNode();
+
+  
+
 
   useEffect(() => {
     if (!app?.currentUser) {
@@ -40,10 +45,12 @@ export const TreeEditor = () => {
 
   let nodeTree: TreeNodeData[] = [];
   let flatTree: FlatNode[] = [];
+  let completedNodes: Node[] = [];
 
   if (nodes) {
-    nodeTree = buildTree(nodes);
-    flatTree = flattenTree(nodeTree);
+    nodeTree = buildTree(nodes)
+    flatTree = flattenTree(nodeTree); 
+    completedNodes = nodes.filter((node)=>node.status === "done")
   }
 
   if (error) {
@@ -53,35 +60,18 @@ export const TreeEditor = () => {
     return <div>Loading...</div>;
   }
 
-  return <NodeTree nodeTree={nodeTree} flatTree={flatTree} />;
+  return (
+    <div className="mx-auto gap-2 flex relative p-8 justify-center items-stretch">
+      <Pane>
+        <NodeTree nodeTree={nodeTree} flatTree={flatTree}/>
+      </Pane>
+      <Pane>
+        <Log completedNodes={completedNodes}/>
+      </Pane>
+    </div>
+  );
 };
 
-export const SubtreeEditor = () => {
-  const app = useContext(AppContext);
-  const navigate = useNavigate();
-  const { nodeId } = useParams();
-
-  const { nodes, loading, error } = useNodeSubtree(nodeId);
-  let nodeTree: TreeNodeData[] = [];
-  let flatTree: FlatNode[] = [];
-
-  useEffect(() => {
-    if (!app?.currentUser) {
-      navigate("/login");
-    }
-  }, [navigate, app]);
-
-  if (nodes) {
-    nodeTree = buildTree(nodes);
-    flatTree = flattenTree(nodeTree);
-  }
-
-  if (error) {
-    navigate("/")
-  }
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  return <NodeTree nodeTree={nodeTree} flatTree={flatTree} />;
+export const Pane = ({ children }: PropsWithChildren) => {
+  return <div className="border-2 w-[600px] p-2 relative">{children}</div>;
 };

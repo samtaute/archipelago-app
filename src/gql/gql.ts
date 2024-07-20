@@ -22,7 +22,6 @@ const documents = {
     "\n    mutation DeleteOneNode($query: NodeQueryInput!){\n        deleteOneNode(query: $query){\n            _id\n        }\n    }\n": types.DeleteOneNodeDocument,
     "\n    mutation DeleteManyNodes($query: NodeQueryInput!){\n        deleteManyNodes(query: $query){\n            deletedCount\n        }\n    }\n": types.DeleteManyNodesDocument,
     "\n    mutation DeleteNodeAndChildren($input: NodeQueryInput){\n        deleteNodeAndChildren(input: $input)\n    }\n": types.DeleteNodeAndChildrenDocument,
-    "\n    mutation ResetOrders($input: ObjectId){\n        resetOrders(input: $input)\n    }\n": types.ResetOrdersDocument,
 };
 
 /**
@@ -75,10 +74,6 @@ export function graphql(source: "\n    mutation DeleteManyNodes($query: NodeQuer
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    mutation DeleteNodeAndChildren($input: NodeQueryInput){\n        deleteNodeAndChildren(input: $input)\n    }\n"): (typeof documents)["\n    mutation DeleteNodeAndChildren($input: NodeQueryInput){\n        deleteNodeAndChildren(input: $input)\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    mutation ResetOrders($input: ObjectId){\n        resetOrders(input: $input)\n    }\n"): (typeof documents)["\n    mutation ResetOrders($input: ObjectId){\n        resetOrders(input: $input)\n    }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
